@@ -1,0 +1,656 @@
+basePath: /api
+definitions:
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  models.Post:
+    properties:
+      answerCount:
+        type: integer
+      body:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      parentId:
+        type: integer
+      score:
+        type: integer
+      title:
+        type: string
+      updatedAt:
+        type: string
+      userID:
+        type: integer
+      viewCount:
+        type: integer
+    required:
+    - body
+    - title
+    - userID
+    type: object
+  models.User:
+    properties:
+      answerCount:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      posts:
+        items:
+          $ref: '#/definitions/models.Post'
+        type: array
+      surname:
+        type: string
+      updatedAt:
+        type: string
+    required:
+    - email
+    - name
+    - surname
+    type: object
+info:
+  contact:
+    email: enis.habul@protonmail.com
+    name: API Support
+  description: This is an auto-generated API Docs.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: API
+  version: "1.0"
+paths:
+  /v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login user
+      parameters:
+      - description: Email
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: Password
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Login user if email and password is correct
+      tags:
+      - Auth
+  /v1/auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Logout user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Remove http_only cookie (logout)
+      tags:
+      - Auth
+  /v1/auth/me:
+    get:
+      consumes:
+      - application/json
+      description: Return logged in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      security:
+      - ApiKeyAuth: []
+      summary: Check jwt from cookie if valid return user
+      tags:
+      - Auth
+  /v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register user
+      parameters:
+      - description: Name
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: Surname
+        in: body
+        name: surname
+        required: true
+        schema:
+          type: string
+      - description: Email
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: Password
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Make user account if email is not used
+      tags:
+      - Auth
+  /v1/auth/updatedetails:
+    put:
+      consumes:
+      - application/json
+      description: Update user details
+      parameters:
+      - description: Email
+        in: body
+        name: email
+        schema:
+          type: string
+      - description: Name
+        in: body
+        name: name
+        schema:
+          type: string
+      - description: Surname
+        in: body
+        name: surname
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Update user details name, surname or email
+      tags:
+      - Auth
+  /v1/auth/updatepassword:
+    put:
+      consumes:
+      - application/json
+      description: Update user password
+      parameters:
+      - description: Current password
+        in: body
+        name: currentPassword
+        required: true
+        schema:
+          type: string
+      - description: New password
+        in: body
+        name: newPassword
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Update user password if current password is correct
+      tags:
+      - Auth
+  /v1/posts:
+    get:
+      consumes:
+      - application/json
+      description: Return all posts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Post'
+            type: array
+      summary: Return all posts from database
+      tags:
+      - Post
+    post:
+      consumes:
+      - application/json
+      description: Create post
+      parameters:
+      - description: Title
+        in: body
+        name: title
+        required: true
+        schema:
+          type: string
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          type: string
+      - description: Parent ID
+        in: body
+        name: parentID
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Post'
+      security:
+      - ApiKeyAuth: []
+      summary: Create new post in database
+      tags:
+      - Post
+  /v1/posts/:id:
+    delete:
+      consumes:
+      - application/json
+      description: Delete post by given ID.
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: delete post by given ID if user is authorized
+      tags:
+      - Post
+    get:
+      consumes:
+      - application/json
+      description: Return one post
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Post'
+      summary: Return one post for given id
+      tags:
+      - Post
+    put:
+      consumes:
+      - application/json
+      description: Update post by given ID.
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Title
+        in: body
+        name: title
+        required: true
+        schema:
+          type: string
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Upadate post by given ID if user is authorized
+      tags:
+      - Post
+  /v1/public/answers/:questionID:
+    get:
+      consumes:
+      - application/json
+      description: Return all user answers
+      parameters:
+      - description: Question ID
+        in: path
+        name: questionID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Post'
+            type: array
+      summary: Return all answers for provided questionid
+      tags:
+      - Public
+  /v1/public/questions:
+    get:
+      consumes:
+      - application/json
+      description: Return all questions
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Post'
+            type: array
+      summary: Return all questions
+      tags:
+      - Public
+  /v1/public/questions/:page-:pageSize:
+    get:
+      consumes:
+      - application/json
+      description: Return all questions in range
+      parameters:
+      - description: Page
+        in: path
+        name: page
+        required: true
+        type: integer
+      - description: Page Size
+        in: path
+        name: pageSize
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Post'
+            type: array
+      summary: Return all questions in range sent by user
+      tags:
+      - Public
+  /v1/public/top-answers:
+    get:
+      consumes:
+      - application/json
+      description: Return list of users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+      summary: Return list of users with most answers
+      tags:
+      - Public
+  /v1/scores/add:
+    post:
+      consumes:
+      - application/json
+      description: Increment or decrement score
+      parameters:
+      - description: Post ID
+        in: body
+        name: postID
+        required: true
+        schema:
+          type: integer
+      - description: Vote
+        in: body
+        name: vote
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Increment or decrement score by one
+      tags:
+      - Scores
+  /v1/scores/get/:postID:
+    get:
+      consumes:
+      - application/json
+      description: Return post score value
+      parameters:
+      - description: Post ID
+        in: path
+        name: postID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Return post score value for given postID
+      tags:
+      - Scores
+  /v1/scores/top:
+    get:
+      consumes:
+      - application/json
+      description: Return list of hot questions
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Post'
+            type: array
+      summary: Return list of top questions
+      tags:
+      - Scores
+  /v1/status:
+    get:
+      consumes:
+      - application/json
+      description: Check server status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Check if server is runing
+      tags:
+      - Status
+  /v1/user/answers/:
+    get:
+      consumes:
+      - application/json
+      description: Return all user answers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Post'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Return all answers for logged user
+      tags:
+      - User
+  /v1/user/questions:
+    get:
+      consumes:
+      - application/json
+      description: Return all user questions
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Post'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Return all questions for logged user
+      tags:
+      - User
+  /v1/user/questions/:page-:pageSize:
+    get:
+      consumes:
+      - application/json
+      description: Return all questions in range
+      parameters:
+      - description: Page
+        in: path
+        name: page
+        required: true
+        type: integer
+      - description: Page Size
+        in: path
+        name: pageSize
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Post'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Return all questions in range sent by user
+      tags:
+      - User
+  /v1/views:
+    post:
+      consumes:
+      - application/json
+      description: Increment view
+      parameters:
+      - description: Post ID
+        in: body
+        name: postID
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Increment view count by one
+      tags:
+      - Views
+  /v1/views/:postID:
+    get:
+      consumes:
+      - application/json
+      description: Return number of views
+      parameters:
+      - description: Post ID
+        in: path
+        name: postID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Return number of views for given postID
+      tags:
+      - Views
+securityDefinitions:
+  ApiKeyAuth:
+    in: cookie
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
