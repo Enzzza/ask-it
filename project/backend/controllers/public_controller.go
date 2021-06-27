@@ -52,10 +52,19 @@ func GetPaginatedPublicQuestions(c *fiber.Ctx) error {
 			"error": true,
 		})
 	}
+	var allQuestions []models.Post
+	if err := database.DB.Where("parent_id= ?",0).Find(&allQuestions).Error; err!= nil{
+		fmt.Println("Couldn't query database")
+	}
+
+	prev, next := utils.GetPaginationMsg(c,len(allQuestions))
 	return c.JSON(fiber.Map{
 		"msg": fmt.Sprintf("Number of question found %v", len(publicQuestions)),
+		"total": len(allQuestions),
 		"questions": publicQuestions,
 		"error": false,
+		"prev": prev,
+		"next": next,
 	})
 
 }
