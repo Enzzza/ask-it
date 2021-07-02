@@ -15,6 +15,7 @@ type User struct {
 	Name      string         	`json:"name" validate:"lte=255"`
 	Surname   string         	`json:"surname" validate:"lte=255"`
 	Email     string         	`json:"email" gorm:"unique" validate:"required,email"`
+	DisplayName string          `json:"displayName" gorm:"unique" validate:"required"`
 	ProfileColor string         `json:"profileColor" gorm:"column:profile_color"`
 	ProfileShade string         `json:"profileShade" gorm:"column:profile_shade"`
 	Password  []byte         	`json:"-"`

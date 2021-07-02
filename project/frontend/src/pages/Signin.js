@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
+import { Redirect, Link as RouterLink } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import { useAuth } from '../contexts/AuthContext';
-import { useForm } from '../hooks/useForm';
+import { makeStyles } from '@material-ui/core/styles';
 
-import { Redirect, Link as RouterLink } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { useForm, FormProvider } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import SignInForm from '../components/forms/SignInForm';
 
 function Copyright() {
   return (
@@ -50,16 +52,19 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignIn() {
   const classes = useStyles();
-  const [values, handleChange] = useForm({
-    email: "",
-    password: "",
+
+  const schema = yup.object().shape({
+    email: yup.string().email('Email is invalid').required('Email is required'),
+    password: yup.string().required('Password is required'),
   });
+
+  const methods = useForm({ resolver: yupResolver(schema) });
+
   const [redirect, setRedirect] = useState(false);
   const auth = useAuth();
 
-  const submit = async (e) => {
-    e.preventDefault();
-    let user = await auth.signin(values.email, values.password);
+  const formSubmitHandler = async ({ email, password }) => {
+    let user = await auth.signin(email, password);
     if (user) {
       console.log('User signed in');
       setRedirect(true);
@@ -79,50 +84,32 @@ export default function SignIn() {
         <Typography component='h1' variant='h5'>
           Sign in
         </Typography>
-        <form onSubmit={submit} className={classes.form} noValidate>
-          <TextField
-            variant='outlined'
-            margin='normal'
-            required
-            fullWidth
-            id='email'
-            label='Email Address'
-            name='email'
-            autoComplete='email'
-            value={values.email}
-            autoFocus
-            onChange={handleChange}
-          />
-          <TextField
-            variant='outlined'
-            margin='normal'
-            required
-            fullWidth
-            name='password'
-            label='Password'
-            type='password'
-            id='password'
-            autoComplete='current-password'
-            value={values.password}
-            onChange={handleChange}
-          />
-          <Button
-            type='submit'
-            fullWidth
-            variant='contained'
-            color='primary'
-            className={classes.submit}
+        <FormProvider {...methods}>
+          <form
+            onSubmit={methods.handleSubmit(formSubmitHandler)}
+            className={classes.form}
           >
-            Sign In
-          </Button>
-          <Grid container>
-            <Grid item>
-              <RouterLink to='/sign-up' style={{ textDecoration: 'none' }}>
-                <Typography variant='body1' color="primary">Don't have an account? Sign Up</Typography>
-              </RouterLink>
+            <SignInForm />
+            <Button
+              type='submit'
+              fullWidth
+              variant='contained'
+              color='primary'
+              className={classes.submit}
+            >
+              Sign Up
+            </Button>
+            <Grid container>
+              <Grid item>
+                <RouterLink to='/sign-up' style={{ textDecoration: 'none' }}>
+                  <Typography variant='body1' color='primary'>
+                    Don't have an account? Sign Up
+                  </Typography>
+                </RouterLink>
+              </Grid>
             </Grid>
-          </Grid>
-        </form>
+          </form>
+        </FormProvider>
       </div>
       <Box mt={8}>
         <Copyright />

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Box,
   Button,
@@ -6,78 +5,50 @@ import {
   CardContent,
   CardHeader,
   Divider,
-  Grid,
-  TextField,
 } from '@material-ui/core';
-
+import { useForm, FormProvider } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import AccountProfileDetailsForm from '../forms/AccountProfileDetailsForm';
 import { useAuth } from '../../contexts/AuthContext';
-import { useForm } from '../../hooks/useForm';
-
-
 
 const AccountProfileDetails = (props) => {
   const auth = useAuth();
-  const [values, handleChange] = useForm({
-    firstName: auth.user.name,
-    lastName: auth.user.surname,
-    email: auth.user.email,
+
+  const schema = yup.object().shape({
+    email: yup.string().email('Email is invalid'),
   });
 
+  const methods = useForm({ resolver: yupResolver(schema) });
 
+  // console.log('errors', methods.errors);
+  const formSubmitHandler = (data) => {
+    console.log('form');
+    console.log('Form data is ', data);
+  };
 
   return (
-    <form autoComplete='off' noValidate {...props}>
+    <FormProvider {...methods}>
       <Card>
         <CardHeader subheader='The information can be edited' title='Profile' />
         <Divider />
-        <CardContent>
-          <Grid container spacing={3}>
-            <Grid item md={6} xs={12}>
-              <TextField
-                fullWidth
-                helperText='Please specify the first name'
-                label='First name'
-                name='firstName'
-                onChange={handleChange}
-                value={values.firstName}
-                variant='outlined'
-              />
-            </Grid>
-            <Grid item md={6} xs={12}>
-              <TextField
-                fullWidth
-                label='Last name'
-                name='lastName'
-                onChange={handleChange}
-                value={values.lastName}
-                variant='outlined'
-              />
-            </Grid>
-            <Grid item md={6} xs={12}>
-              <TextField
-                fullWidth
-                label='Email Address'
-                name='email'
-                onChange={handleChange}
-                required
-                value={values.email}
-                variant='outlined'
-              />
-            </Grid>
-          </Grid>
-        </CardContent>
-        <Divider />
-        <Box
-          display="flex"
-          m={2}
-          justifyContent='flex-end'
+        <form
+          onSubmit={methods.handleSubmit(formSubmitHandler)}
+          autoComplete='off'
+          noValidate
         >
-          <Button color='primary' variant='contained'>
-            Save details
-          </Button>
-        </Box>
+          <CardContent>
+            <AccountProfileDetailsForm user={auth.user} />
+          </CardContent>
+          <Divider />
+          <Box display='flex' m={2} justifyContent='flex-end'>
+            <Button color='primary' variant='contained' type='submit'>
+              Save details
+            </Button>
+          </Box>
+        </form>
       </Card>
-    </form>
+    </FormProvider>
   );
 };
 

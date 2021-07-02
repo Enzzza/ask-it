@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Box,
   Button,
@@ -6,81 +5,52 @@ import {
   CardContent,
   CardHeader,
   Divider,
-  TextField
 } from '@material-ui/core';
+import { useForm, FormProvider } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
-const AccountPassword = (props) => {
-  const [values, setValues] = useState({
-    currentPassword:'',
-    newPassword: '',
-    confirmPassword: ''
+import AccountPasswordForm from '../forms/AccountPasswordForm';
+
+const AccountPassword = () => {
+  const schema = yup.object().shape({
+    currentPassword: yup.string().required('Current password is required'),
+    newPassword: yup.string().min(6, 'Password must be at least 6 characters').required('New password is required').matches(
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+      'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character'
+    ),
+    confirmPassword: yup
+      .string()
+      .oneOf([yup.ref('newPassword'), null], 'Passwords must match')
+      .required('Confirm Password is required'),
   });
 
-  const handleChange = (event) => {
-    setValues({
-      ...values,
-      [event.target.name]: event.target.value
-    });
+  const methods = useForm({ resolver: yupResolver(schema) });
+
+  // console.log('errors', methods.errors);
+  const formSubmitHandler = (data) => {
+    console.log('form');
+    console.log('Form data is ', data);
   };
 
   return (
-    <form {...props}>
+    <FormProvider {...methods}>
       <Card>
-        <CardHeader
-          subheader="Update password"
-          title="Password"
-        />
+        <CardHeader subheader='Update password' title='Password' />
         <Divider />
-        <CardContent>
-          <TextField
-            fullWidth
-            label="Current password"
-            margin="normal"
-            name="currentPassword"
-            onChange={handleChange}
-            type="password"
-            value={values.currentPassword}
-            variant="outlined"
-            autoComplete='password'
-          />
-          <TextField
-            fullWidth
-            label="New password"
-            margin="normal"
-            name="newPassword"
-            onChange={handleChange}
-            type="password"
-            value={values.newPassword}
-            variant="outlined"
-            autoComplete='password'
-          />
-          <TextField
-            fullWidth
-            label="Confirm password"
-            margin="normal"
-            name="confirmPassword"
-            onChange={handleChange}
-            type="password"
-            value={values.confirmPassword}
-            variant="outlined"
-            autoComplete='password'
-          />
-        </CardContent>
-        <Divider />
-        <Box
-          display="flex"
-          m={2}
-          justifyContent='flex-end'
-        >
-          <Button
-            color="primary"
-            variant="contained"
-          >
-            Update
-          </Button>
-        </Box>
+        <form onSubmit={methods.handleSubmit(formSubmitHandler)}>
+          <CardContent>
+            <AccountPasswordForm />
+          </CardContent>
+          <Divider />
+          <Box display='flex' m={2} justifyContent='flex-end'>
+            <Button color='primary' variant='contained' type='submit'>
+              Update
+            </Button>
+          </Box>
+        </form>
       </Card>
-    </form>
+    </FormProvider>
   );
 };
 

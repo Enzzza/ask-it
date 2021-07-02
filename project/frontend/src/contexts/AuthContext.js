@@ -24,8 +24,8 @@ function useProvideAuth() {
     return user;
   };
 
-  const signup = async (name, surname, email, password) => {
-    let user = await authController.signup(name, surname, email, password);
+  const signup = async (data) => {
+    let user = await authController.signup(data);
 
     if (user) {
       setUser(user);

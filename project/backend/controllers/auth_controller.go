@@ -44,6 +44,7 @@ func Register(c *fiber.Ctx) error {
 		Name:    strings.Title(strings.ToLower(data["name"])) ,
 		Surname: strings.Title(strings.ToLower(data["surname"])),
 		Email:    strings.ToLower(data["email"]),
+		DisplayName: data["displayName"],
 		ProfileColor: profileColor,
 		ProfileShade: profileShade,
 		Password: password,

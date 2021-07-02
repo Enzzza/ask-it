@@ -1,22 +1,24 @@
 import React, { useState } from 'react';
+import { Redirect, Link as RouterLink } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import IconButton from '@material-ui/core/IconButton';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+
 import { useAuth } from '../contexts/AuthContext';
-import { useForm } from '../hooks/useForm';
-import { Redirect, Link as RouterLink } from 'react-router-dom';
+import SingUpForm from '../components/forms/SignUpForm';
+import { useForm, FormProvider } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+
+import UsernameGenerator from 'username-generator';
+
 
 function Copyright() {
   return (
@@ -53,41 +55,33 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignUp() {
   const classes = useStyles();
-  const [showPassword,setShowPassword] = useState(false);
-  const [showCurrentPassword,setShowCurrentPassword] = useState(false);
-  const [values, handleChange] = useForm({
-    name: '',
-    surname: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+
+  const schema = yup.object().shape({
+    email: yup.string().email('Email is invalid').required('Email is required'),
+    password: yup
+      .string()
+      .min(6, 'Password must be at least 6 characters')
+      .required('Password is required')
+      .matches(
+        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+        'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character'
+      ),
+    confirmPassword: yup
+      .string()
+      .oneOf([yup.ref('password'), null], 'Passwords must match')
+      .required('Confirm Password is required'),
   });
 
-
-  const handleClickShowPassword = () => {
-    setShowPassword(p=>!p);
-  };
-
-  const handleClickShowCurrentPassword = () => {
-    setShowCurrentPassword(p=>!p);
-  };
-
-  
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
+  const methods = useForm({ resolver: yupResolver(schema) });
 
   const [redirect, setRedirect] = useState(false);
   const auth = useAuth();
 
-  const submit = async (e) => {
-    e.preventDefault();
-    let user = await auth.signup(
-      values.name,
-      values.surname,
-      values.email,
-      values.password
-    );
+  const formSubmitHandler = async (data) => {
+    let displayName = UsernameGenerator.generateUsername();
+    let user = await auth.signup({...data,displayName});
+    
+    console.log(displayName);
     if (user) {
       console.log('User made');
       console.log(user);
@@ -109,128 +103,32 @@ export default function SignUp() {
         <Typography component='h1' variant='h5'>
           Sign up
         </Typography>
-        <form onSubmit={submit} className={classes.form}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                autoComplete='fname'
-                name='name'
-                variant='outlined'
-                fullWidth
-                id='name'
-                label='Name'
-                autoFocus
-                value={values.name}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant='outlined'
-                fullWidth
-                id='surname'
-                label='Surname'
-                name='surname'
-                autoComplete='lname'
-                value={values.surname}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant='outlined'
-                required
-                fullWidth
-                id='email'
-                label='Email Address'
-                name='email'
-                autoComplete='email'
-                value={values.email}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant='outlined'
-                required
-                fullWidth
-                name='password'
-                label='Password'
-                type={showPassword ? 'text' : 'password'}
-                id='password'
-                autoComplete='new-password'
-                value={values.password}
-                onChange={handleChange}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position='end'>
-                      <IconButton
-                        aria-label='toggle password visibility'
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                      >
-                        {showPassword ? (
-                          <Visibility />
-                        ) : (
-                          <VisibilityOff />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant='outlined'
-                required
-                fullWidth
-                name='confirmPassword'
-                label='Confirm password'
-                type={showCurrentPassword ? 'text' : 'password'}
-                id='confirmPassword'
-                autoComplete='new-password'
-                value={values.confirmPassword}
-                onChange={handleChange}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position='end'>
-                      <IconButton
-                        aria-label='toggle password visibility'
-                        onClick={handleClickShowCurrentPassword}
-                        onMouseDown={handleMouseDownPassword}
-                      >
-                        {showCurrentPassword ? (
-                          <Visibility />
-                        ) : (
-                          <VisibilityOff />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
-          </Grid>
-          <Button
-            type='submit'
-            fullWidth
-            variant='contained'
-            color='primary'
-            className={classes.submit}
+        <FormProvider {...methods}>
+          <form
+            onSubmit={methods.handleSubmit(formSubmitHandler)}
+            className={classes.form}
           >
-            Sign Up
-          </Button>
-          <Grid container justify='flex-end'>
-            <Grid item>
-              <RouterLink to='/sign-in' style={{ textDecoration: 'none' }}>
-                <Typography variant='body1' color='primary'>
-                  Already have an account? Sign in
-                </Typography>
-              </RouterLink>
+            <SingUpForm />
+            <Button
+              type='submit'
+              fullWidth
+              variant='contained'
+              color='primary'
+              className={classes.submit}
+            >
+              Sign Up
+            </Button>
+            <Grid container justify='flex-end'>
+              <Grid item>
+                <RouterLink to='/sign-in' style={{ textDecoration: 'none' }}>
+                  <Typography variant='body1' color='primary'>
+                    Already have an account? Sign in
+                  </Typography>
+                </RouterLink>
+              </Grid>
             </Grid>
-          </Grid>
-        </form>
+          </form>
+        </FormProvider>
       </div>
       <Box mt={5}>
         <Copyright />

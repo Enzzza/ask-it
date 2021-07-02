@@ -21,16 +21,13 @@ export const authController = {
         
     },
 
-    async signup(name,surname,email,password){
+    async signup(data){
         const response = await fetch(`http://localhost:8000/api/v1/auth/register`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             credentials: "include",
             body: JSON.stringify({
-                name,
-                surname,
-                email,
-                password,
+                ...data
             })
         });
         if(!response.ok){

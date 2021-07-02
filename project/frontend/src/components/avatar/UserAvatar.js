@@ -9,7 +9,7 @@ export const UserAvatar = React.memo((props) => {
   
   return (
     <Avatar className={`${classes.profileColor} ${classes.size}`}>
-      {user.name? user.name.toUpperCase().charAt(0) + user.surname.toUpperCase().charAt(0): user.email.toUpperCase().charAt(0)}
+      {user.name? user.name.toUpperCase().charAt(0) + user.surname.toUpperCase().charAt(0): user.displayName.toUpperCase().charAt(0)}
     </Avatar>
   );
 })
