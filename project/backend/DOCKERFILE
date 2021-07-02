@@ -14,8 +14,14 @@ COPY go.mod .
 COPY go.sum .
 RUN go mod download
 
+# Download swag cmd tool for generating docs
+#RUN go get -u github.com/swaggo/swag/cmd/swag
+
 # Copy the code into the container
 COPY . .
+
+# Generate docs
+#RUN swag init --parseDependency --parseInternal
 
 # Build the application
 RUN go build -o main .

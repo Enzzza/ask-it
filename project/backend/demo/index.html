@@ -114,7 +114,7 @@
         
 
 
-        let socket = new WebSocket(`ws://localhost:9000/ws/${userID}`);
+        let socket = new WebSocket(`ws://localhost:8000/ws/${userID}`);
         // message received - show the message in badge
         socket.onmessage = function (event) {
             alert(`[message] Data received from server: ${event.data}`);

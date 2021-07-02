@@ -110,3 +110,32 @@ func GetUserAnswers(c *fiber.Ctx) error {
 		"error": false,
 	})
 }
+
+
+// GetUserProfile will return user name,surname and email
+// @Description Return user profile information by id
+// @Summary Return user name, surname and email
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param id path integer  true "User ID"
+// @Success 200 {object} models.User
+// @Router /v1/user/profile/:id [get]
+func GetUserProfile(c *fiber.Ctx) error {
+	id := c.Params("id");
+	var user models.User
+
+	if result := database.DB.Where("id = ?", id).First(&user); result.Error != nil {
+		return c.JSON(fiber.Map{
+			"msg": "Couldn't find user!",
+			"error": true,
+		})
+	}
+	
+
+	return c.JSON(fiber.Map{
+		"msg": fmt.Sprintf("User with id %v: ",id),
+		"user": user,
+		"error": false,
+	})
+}

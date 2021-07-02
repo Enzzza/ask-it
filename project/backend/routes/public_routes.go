@@ -41,4 +41,8 @@ func PublicRoutes(a *fiber.App) {
 	// SCORE ROUTES
 	route.Get("/scores/get/:postID",controllers.GetScore)
 	route.Get("/scores/top",controllers.GetTopScoreQuestions)
-}
+
+	// USER ROUTES
+	route.Get("/user/profile/:id", controllers.GetUserProfile)
+
+}	

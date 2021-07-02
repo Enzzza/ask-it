@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Enzzza/ask-it/project/backend/cache"
@@ -10,6 +11,7 @@ import (
 	"github.com/Enzzza/ask-it/project/backend/models"
 	"github.com/Enzzza/ask-it/project/backend/utils"
 	"github.com/gofiber/fiber/v2"
+	"github.com/iancoleman/strcase"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -36,13 +38,17 @@ func Register(c *fiber.Ctx) error {
 	}
 
 	password, _ := bcrypt.GenerateFromPassword([]byte(data["password"]), 14)
+	profileColor, profileShade := utils.GenerateProfileColor()
 
 	user := models.User{
-		Name:     data["name"],
-		Surname: data["surname"],
-		Email:    data["email"],
+		Name:    strings.Title(strings.ToLower(data["name"])) ,
+		Surname: strings.Title(strings.ToLower(data["surname"])),
+		Email:    strings.ToLower(data["email"]),
+		ProfileColor: profileColor,
+		ProfileShade: profileShade,
 		Password: password,
 	}
+
 	// Create a new validator for a User model.
 	validate := utils.NewValidator()
 
@@ -55,19 +61,14 @@ func Register(c *fiber.Ctx) error {
 		})
 	}
 	if result := database.DB.Create(&user); result.Error != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"msg": "User with that email already exist!",
 			"error": true,
 		})
 	}
+	msg := []cache.MsgToUser{}
+	return sendTokenResponse(user,c,"Success you are registered!",msg)
 	
-
-	// Return status 201 Created.
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"msg":   "Success you are registered",
-		"user":  user,
-		"error": false,
-	})
 }
 
 // Login func will login user.
@@ -119,7 +120,7 @@ func Login(c *fiber.Ctx) error {
 
 
 	return sendTokenResponse(user,c,"You are logged in!",messages)
-	
+
 }
 
 // User func will return logged in user.
@@ -132,17 +133,17 @@ func Login(c *fiber.Ctx) error {
 // @Security ApiKeyAuth
 // @Router /v1/auth/me [get]
 func User(c *fiber.Ctx) error {
-	
+
 	var user models.User
 	id := fmt.Sprintf("%v", c.Locals("id"))
-	
+
 	if result := database.DB.Where("id = ?", id).First(&user); result.Error != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"msg": "Couldn't find user!",
 			"error": true,
 		})
 	}
-	
+
 
 	return c.JSON(fiber.Map{
 		"msg": "Logged in user is:",
@@ -179,6 +180,8 @@ func Logout(c *fiber.Ctx) error {
 // @Param email body string false "Email"
 // @Param name body string false "Name"
 // @Param surname body string false "Surname"
+// @Param profileColor body string false "Profile Color"
+// @Param profileShade body string false "Profile Shade"
 // @Success 200 {string} status "ok"
 // @Security ApiKeyAuth
 // @Router /v1/auth/updatedetails [put]
@@ -195,7 +198,7 @@ func UpdateDetails(c *fiber.Ctx) error {
 	id := fmt.Sprintf("%v", c.Locals("id"))
 
 	if result := database.DB.Where("id = ?", id).First(&user); result.Error != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": "Couldn't update user details!",
 			"error": true,
 		})
@@ -203,16 +206,18 @@ func UpdateDetails(c *fiber.Ctx) error {
 
 	updateData := make(map[string]interface{})
 	for key, element := range data {
-		updateData[key] = element
+		
+		snakeKey := strcase.ToSnake(key)
+		updateData[snakeKey] = element
     }
-
-	if result := database.DB.Model(&user).Select("name","surname","email").Updates(updateData); result.Error != nil {
-		return c.JSON(fiber.Map{
+	fmt.Println(updateData);
+	if result := database.DB.Debug().Model(&user).Select("name","surname","email","profile_color","profile_shade").Updates(updateData); result.Error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": "Couldn't update details!",
 			"error": true,
 		})
 	}
-	
+
 	return c.JSON(fiber.Map{
 		"msg": "Details updated!",
 		"user": user,
@@ -242,12 +247,12 @@ func UpdatePassword(c *fiber.Ctx) error {
 			"error" : true,
 		})
 	}
-	
+
 	var user models.User
 	id := fmt.Sprintf("%v", c.Locals("id"))
-	
+
 	if result := database.DB.Where("id = ?", id).First(&user); result.Error != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"msg": "Couldn't find user!",
 			"error": true,
 		})
@@ -257,19 +262,19 @@ func UpdatePassword(c *fiber.Ctx) error {
 
 	if err := bcrypt.CompareHashAndPassword(user.Password, []byte(data["currentPassword"])); err != nil {
 		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"msg": "Current password not correct!",
 			"error": true,
 		})
 	}
 	password, _ := bcrypt.GenerateFromPassword([]byte(data["newPassword"]), 14)
 	if result := database.DB.Model(&user).Update("password", password); result.Error != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": "Couldn't update password!",
 			"error": true,
 		})
 	}
-	
+
 	cookie := invalidateCookie()
 	c.Cookie(&cookie)
 	msg := []cache.MsgToUser{}
@@ -282,7 +287,7 @@ func UpdatePassword(c *fiber.Ctx) error {
 // Generate new token, create cookie and send response
 func sendTokenResponse(user models.User,c *fiber.Ctx,msg string, messages []cache.MsgToUser) error{
 
-	
+
 	token, err := utils.GenerateNewAccessToken(user.Id)
 
 	if err != nil {
@@ -302,11 +307,11 @@ func sendTokenResponse(user models.User,c *fiber.Ctx,msg string, messages []cach
 
 	c.Cookie(&cookie)
 	id := strconv.Itoa(int(user.Id))
-	
+
 	cache.RemoveMsgFromRedis(id)
 	return c.JSON(fiber.Map{
 		"msg": msg,
-		"userID": user.Id,
+		"user": user,
 		"error": false,
 		"messages": messages,
 	})

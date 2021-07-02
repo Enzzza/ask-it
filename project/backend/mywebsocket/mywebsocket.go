@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/Enzzza/ask-it/project/backend/cache"
+	"github.com/Enzzza/ask-it/project/backend/middleware"
 	"github.com/antoniodipinto/ikisocket"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
@@ -24,7 +25,7 @@ type msgToUser struct{
 func SetupWebsocket(app *fiber.App) {
 	
 	// Setup the middleware to retrieve the data sent in GET request
-	app.Use("/ws",func(c *fiber.Ctx) error {
+	app.Use("/ws",middleware.JWTProtected(),middleware.SetClaims(),func(c *fiber.Ctx) error {
 		// IsWebSocketUpgrade returns true if the client
 		// requested upgrade to the WebSocket protocol.
 		if websocket.IsWebSocketUpgrade(c) {

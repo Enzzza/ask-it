@@ -13,6 +13,7 @@ require (
 	github.com/gofiber/jwt/v2 v2.2.3
 	github.com/gofiber/websocket/v2 v2.0.6
 	github.com/gomodule/redigo v1.8.5
+	github.com/iancoleman/strcase v0.1.3 // indirect
 	github.com/swaggo/swag v1.7.0
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
 	gorm.io/driver/mysql v1.1.1
