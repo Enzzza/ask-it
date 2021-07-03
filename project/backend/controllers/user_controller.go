@@ -29,7 +29,12 @@ func GetUserQuestions(c *fiber.Ctx) error {
 	}
 
 	var userQuestions []models.Post
-	database.DB.Debug().Where("user_id = ? AND parent_id= ?",id,0).Find(&userQuestions)
+	if err := database.DB.Debug().Where("user_id = ? AND parent_id= ?",id,0).Find(&userQuestions).Error; err != nil{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": "Couldn't query database!",
+			"error": true,
+		})
+	}
 	
 	return c.JSON(fiber.Map{
 		"msg": fmt.Sprintf("Number of question found %v", len(userQuestions)),

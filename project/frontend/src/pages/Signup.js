@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Redirect, Link as RouterLink } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -18,7 +18,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 import UsernameGenerator from 'username-generator';
-
+import useCustomSnackbar from '../components/utils/snackbar/useCustomSnackbar';
+import { SpinnerContext } from '../contexts/SpinnerContext';
 
 function Copyright() {
   return (
@@ -75,18 +76,23 @@ export default function SignUp() {
   const methods = useForm({ resolver: yupResolver(schema) });
 
   const [redirect, setRedirect] = useState(false);
+  const {isLoading,setLoaderState} = useContext(SpinnerContext);
+  const snackbar = useCustomSnackbar()
   const auth = useAuth();
 
   const formSubmitHandler = async (data) => {
     let displayName = UsernameGenerator.generateUsername();
+    setLoaderState(true);
     let user = await auth.signup({...data,displayName});
     
-    console.log(displayName);
     if (user) {
-      console.log('User made');
-      console.log(user);
+      snackbar.showSuccess(`Welcome and have fun ${displayName}`,"Close",() => {})
       setRedirect(true);
+    }else{
+      snackbar.showError("Something bad happend try again!","Close",() => {})
     }
+
+    setLoaderState(false);
   };
 
   if (redirect) {
@@ -115,6 +121,7 @@ export default function SignUp() {
               variant='contained'
               color='primary'
               className={classes.submit}
+              disabled={isLoading}
             >
               Sign Up
             </Button>

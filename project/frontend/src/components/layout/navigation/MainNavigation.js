@@ -18,6 +18,8 @@ import {
 import { useAuth } from '../../../contexts/AuthContext';
 import { useHistory } from 'react-router-dom';
 
+import useCustomSnackbar from '../../utils/snackbar/useCustomSnackbar';
+
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
@@ -29,10 +31,12 @@ export default function PrimarySearchAppBar() {
   let history = useHistory();
   const classes = useStyles();
   const popupState = usePopupState({ variant: 'popover', popupId: 'userMenu' });
+  const snackbar = useCustomSnackbar()
 
   const signout = async () => {
     popupState.close();
     await auth.signout();
+    snackbar.showInfo("Come again! :)","Close",()=>{})
   };
 
   const myAccount = () => {

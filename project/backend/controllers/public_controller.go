@@ -121,3 +121,31 @@ func GetUsersWithMostAnswers(c *fiber.Ctx) error {
 		"error": false,
 	})
 }
+
+
+// GetUserQuestionsById func will return user questions
+// @Description Return all user questions by given userID
+// @Summary Return all questions for user with given id
+// @Tags Public
+// @Accept json
+// @Produce json
+// @Param userID path integer  true "User ID"
+// @Success 200 {array} models.Post
+// @Router /v1/public/questions/:userID [get]
+func GetPublicQuestionsById(c *fiber.Ctx) error {
+	id := c.Params("userID")
+
+	var userQuestions []models.Post
+	if err:= database.DB.Debug().Where("user_id = ? AND parent_id= ?",id,0).Find(&userQuestions).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": "Couldn't query database!",
+			"error": true,
+		})
+	}
+	
+	return c.JSON(fiber.Map{
+		"msg": fmt.Sprintf("Number of question found %v", len(userQuestions)),
+		"questions": userQuestions,
+		"error": false,
+	})
+}

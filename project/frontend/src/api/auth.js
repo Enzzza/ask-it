@@ -31,10 +31,10 @@ export const authController = {
             })
         });
         if(!response.ok){
+            console.log(await response.json());
             return false;
         }
         const content = await response.json();
-
         return content.user;
     },
 
@@ -45,6 +45,7 @@ export const authController = {
             credentials: 'include',
         });
         if(!response.ok){
+
             return false;
         }
 

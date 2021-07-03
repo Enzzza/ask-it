@@ -7,33 +7,43 @@ import {
   Avatar,
   Grid,
 } from '@material-ui/core';
-import { useAuth } from '../../contexts/AuthContext';
 import { UserAvatar } from '../avatar/UserAvatar';
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import relativeTime from 'dayjs/plugin/relativeTime';
-
 import Email from '@material-ui/icons/Email';
 import Question from '@material-ui/icons/Help';
 import Answer from '@material-ui/icons/QuestionAnswer';
 import { teal, lightBlue, deepOrange } from '@material-ui/core/colors';
 
-const AccountProfile = () => {
-  const auth = useAuth();
-  dayjs.extend(duration);
-  dayjs.extend(relativeTime);
-  let now = dayjs();
-  let memberSince = dayjs(auth.user.createdAt).format('YYYY/MM/DD');
-  let timePassed = dayjs(memberSince).from(now);
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
 
+const AccountProfile = (props) => {
+  if (!props.user && !props.loading) {
+    return <p>User not found</p>;
+  } else if (props.loading) {
+    return <div>Loading....</div>;
+  }
+
+  let user = props.user;
+  let displayName = user.displayName;
+  let now = dayjs();
+  let memberSince = dayjs(user.createdAt).format('YYYY/MM/DD');
+  let timePassed = dayjs(memberSince).from(now);
+  let email = user.email;
+  // get it from db
+  let questions = props.questions ? props.questions : 0;
+  let answers = user.answerCount;
+  console.log(user);
   return (
     <Card>
       <CardContent>
         <Box display='flex'>
-          <UserAvatar user={auth.user} spacing={6} />
+          <UserAvatar user={user} spacing={6} />
           <div style={{ marginLeft: 20 }}>
             <Typography color='textPrimary' gutterBottom variant='h4'>
-              @{auth.user.displayName}
+              @{displayName}
             </Typography>
           </div>
         </Box>
@@ -57,7 +67,7 @@ const AccountProfile = () => {
                   Email
                 </Typography>
                 <Typography color='textPrimary' variant='body1'>
-                  {`${auth.user.email}`}
+                  {`${email}`}
                 </Typography>
               </Grid>
               <Grid item>
@@ -86,7 +96,7 @@ const AccountProfile = () => {
                   Questions
                 </Typography>
                 <Typography color='textPrimary' variant='h4'>
-                  {`0`}
+                  {`${questions}`}
                 </Typography>
               </Grid>
               <Grid item>
@@ -111,7 +121,7 @@ const AccountProfile = () => {
                   Answers
                 </Typography>
                 <Typography color='textPrimary' variant='h4'>
-                  {`${auth.user.answerCount}`}
+                  {`${answers}`}
                 </Typography>
               </Grid>
               <Grid item>

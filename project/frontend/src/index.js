@@ -7,6 +7,10 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { QueryClientProvider, QueryClient } from 'react-query';
+import { Spinner } from './components/utils/Spinner';
+import SpinnerContextProvider from './contexts/SpinnerContext';
+import { SnackbarProvider } from 'material-ui-snackbar-provider';
+import CustomSnackbar from './components/utils/snackbar/CustomSnackbar';
 
 const darkTheme = createMuiTheme({
   palette: {
@@ -20,7 +24,14 @@ ReactDOM.render(
   <QueryClientProvider client={queryClient}>
     <React.StrictMode>
       <ThemeProvider theme={darkTheme}>
-        <App />
+        <SpinnerContextProvider>
+          <SnackbarProvider SnackbarComponent={CustomSnackbar}>
+            <>
+              <App />
+              <Spinner />
+            </>
+          </SnackbarProvider>
+        </SpinnerContextProvider>
       </ThemeProvider>
     </React.StrictMode>
   </QueryClientProvider>,

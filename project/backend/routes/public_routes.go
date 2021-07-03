@@ -30,9 +30,10 @@ func PublicRoutes(a *fiber.App) {
 
 	route.Get("/public/questions",controllers.GetPublicQuestions)
 	route.Get("/public/questions/:page-:pageSize",controllers.GetPaginatedPublicQuestions)
+	route.Get("/public/questions/:userID",controllers.GetPublicQuestionsById)
 	route.Get("/public/answers/:questionID",controllers.GetAnswersForQuestion)
 	route.Get("/public/top-answers",controllers.GetUsersWithMostAnswers)
-
+	
 
 	// VIEW ROUTES
 	route.Post("/views",controllers.AddView)

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import { Redirect, Link as RouterLink } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -16,6 +16,9 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import SignInForm from '../components/forms/SignInForm';
+
+import useCustomSnackbar from '../components/utils/snackbar/useCustomSnackbar';
+import { SpinnerContext } from '../contexts/SpinnerContext';
 
 function Copyright() {
   return (
@@ -61,14 +64,22 @@ export default function SignIn() {
   const methods = useForm({ resolver: yupResolver(schema) });
 
   const [redirect, setRedirect] = useState(false);
+  const {isLoading,setLoaderState} = useContext(SpinnerContext);
+  const snackbar = useCustomSnackbar()
+
   const auth = useAuth();
 
   const formSubmitHandler = async ({ email, password }) => {
+    setLoaderState(true);
     let user = await auth.signin(email, password);
     if (user) {
-      console.log('User signed in');
+      snackbar.showSuccess(`Welcome ${user.displayName}`,"Close",() => {});
       setRedirect(true);
+    }else{
+      snackbar.showError("Username or password not correct!","Close",() => {});
     }
+      setLoaderState(false);
+    
   };
 
   if (redirect) {
@@ -96,8 +107,9 @@ export default function SignIn() {
               variant='contained'
               color='primary'
               className={classes.submit}
+              disabled={isLoading}
             >
-              Sign Up
+              Sign In
             </Button>
             <Grid container>
               <Grid item>

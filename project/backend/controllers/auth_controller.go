@@ -25,6 +25,7 @@ import (
 // @Param surname body string true "Surname"
 // @Param email body string true "Email"
 // @Param password body string true "Password"
+// @Param displayName body string true "Display Name"
 // @Success 201 {object} models.User
 // @Router /v1/auth/register [post]
 func Register(c *fiber.Ctx) error {
@@ -94,7 +95,12 @@ func Login(c *fiber.Ctx) error {
 
 	var user models.User
 
-	database.DB.Where("email = ?", data["email"]).First(&user)
+	if err := database.DB.Where("email = ?", data["email"]).First(&user).Error; err != nil{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": "Couldn't query database!",
+			"error": true,
+		})
+	}
 
 
 	if user.Id == 0 {
