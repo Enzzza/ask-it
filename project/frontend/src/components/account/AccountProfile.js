@@ -7,6 +7,7 @@ import {
   Avatar,
   Grid,
 } from '@material-ui/core';
+
 import { UserAvatar } from '../avatar/UserAvatar';
 import Email from '@material-ui/icons/Email';
 import Question from '@material-ui/icons/Help';
@@ -35,7 +36,6 @@ const AccountProfile = (props) => {
   // get it from db
   let questions = props.questions ? props.questions : 0;
   let answers = user.answerCount;
-  console.log(user);
   return (
     <Card>
       <CardContent>

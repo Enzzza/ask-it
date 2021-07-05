@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import {
   Box,
   Button,
@@ -11,20 +12,31 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import AccountProfileDetailsForm from '../forms/AccountProfileDetailsForm';
 import { useAuth } from '../../contexts/AuthContext';
+import useCustomSnackbar from '../utils/snackbar/useCustomSnackbar';
+import { SpinnerContext } from '../../contexts/SpinnerContext';
 
 const AccountProfileDetails = (props) => {
   const auth = useAuth();
-
+  const { isLoading, setLoaderState } = useContext(SpinnerContext);
+  const snackbar = useCustomSnackbar();
   const schema = yup.object().shape({
+    name: yup.string(),
+    surname: yup.string(),
     email: yup.string().email('Email is invalid'),
   });
 
   const methods = useForm({ resolver: yupResolver(schema) });
 
   // console.log('errors', methods.errors);
-  const formSubmitHandler = (data) => {
-    console.log('form');
-    console.log('Form data is ', data);
+  const formSubmitHandler = async (data) => {
+    setLoaderState(true);
+    let { msg, error } = await auth.updateDetails(data);
+    if (!error) {
+      snackbar.showSuccess(`Details updated!`, 'Close', () => {});
+    } else {
+      snackbar.showError(msg, 'Close', () => {});
+    }
+    setLoaderState(false);
   };
 
   return (
@@ -42,7 +54,12 @@ const AccountProfileDetails = (props) => {
           </CardContent>
           <Divider />
           <Box display='flex' m={2} justifyContent='flex-end'>
-            <Button color='primary' variant='contained' type='submit'>
+            <Button
+              color='primary'
+              variant='contained'
+              type='submit'
+              disabled={isLoading}
+            >
               Save details
             </Button>
           </Box>

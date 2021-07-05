@@ -10,8 +10,6 @@ import {
 // screen if you're not yet authenticated.
 function PrivateRoute({ children, ...rest }) {
     const auth = useAuth();
-    console.log(auth);
-    console.log("mounted");
     
     return (
       <Route

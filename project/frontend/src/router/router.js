@@ -11,7 +11,6 @@ import PrivateRoute from './PrivateRoute';
 import {useAuth} from "../contexts/AuthContext";
 export default function Router() {
   const auth = useAuth();
-  console.log("User is:",auth.user);
   
   return (
     <BrowserRouter>

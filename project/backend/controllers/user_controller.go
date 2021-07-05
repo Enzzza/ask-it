@@ -40,6 +40,7 @@ func GetUserQuestions(c *fiber.Ctx) error {
 		"msg": fmt.Sprintf("Number of question found %v", len(userQuestions)),
 		"questions": userQuestions,
 		"error": false,
+		"count": len(userQuestions),
 	})
 }
 
@@ -113,6 +114,7 @@ func GetUserAnswers(c *fiber.Ctx) error {
 		"msg": fmt.Sprintf("Number of answers found %v", len(userAnswers)),
 		"answers": userAnswers,
 		"error": false,
+		"count": len(userAnswers),
 	})
 }
 

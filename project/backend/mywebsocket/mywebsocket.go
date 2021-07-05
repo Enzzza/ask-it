@@ -3,21 +3,23 @@ package mywebsocket
 import (
 	"encoding/json"
 	"fmt"
+	
 
 	"github.com/Enzzza/ask-it/project/backend/cache"
 	"github.com/Enzzza/ask-it/project/backend/middleware"
 	"github.com/antoniodipinto/ikisocket"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
+	
 )
 
 
 var Clients = make(map[string]string)
 
 type msgToUser struct{
-	OrginalPostID uint `json:"orginalPostID"`
-	SenderID uint		`json:"senderID"`
-	NewPostID uint		`json:"newPostID"`
+	OrginalPost interface{} `json:"orginalPost"`
+	Sender interface{} 		`json:"sender"`
+	NewPost interface{} 		`json:"newPost"`
 }
 
 
@@ -79,17 +81,22 @@ func SetupWebsocket(app *fiber.App) {
 }
 
 
-func SendMsgToUser(userID string, orginalPostId uint, senderID uint, newPostID uint){
+func SendMsgToUser(userID string,orginalPost interface{},sender interface{},newPost interface{}){
+	
+	
+	
 	ep := ikisocket.EventPayload{}
+
 	msg := msgToUser{}
-	msg.OrginalPostID = orginalPostId
-	msg.SenderID = senderID
-	msg.NewPostID = newPostID
+	msg.OrginalPost = orginalPost
+	msg.Sender = sender
+	msg.NewPost = newPost
 	json, err := json.Marshal(msg)
 	if err != nil {
        fmt.Println("Couldn't convert to json")
 		json = []byte("")
     }
+	
 
 	if client, ok := Clients[userID]; ok {
 		if err :=  ep.Kws.EmitTo(client,json); err != nil{
@@ -97,9 +104,10 @@ func SendMsgToUser(userID string, orginalPostId uint, senderID uint, newPostID u
 		}
 	}else{
 		fmt.Printf("User with id %s is not online store msg to redis\n",userID)
-		err = cache.StoreMsgToRedis(userID,json)
+		err := cache.StoreMsgToRedis(userID,json)
 		if err != nil{
 			fmt.Println("Couldn't add msg to Redis")
+			fmt.Println(err)
 		}
 	}
 			

@@ -115,6 +115,7 @@ func GetTopScoreQuestions(c *fiber.Ctx) error {
 		"msg": "List of top questions",
 		"score": posts,
 		"error": false,
+		"count": len(posts),
 	})
 }
 

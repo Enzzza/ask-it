@@ -10,7 +10,8 @@ const colors = {
 };
 
 const GenerateUserAvatarStyle = (profileColor, profileShade,spacing=5) => {
-  console.log("function called");
+  
+  
   return makeStyles((theme) => ({
     profileColor: {
       color: theme.palette.getContrastText(colors[profileColor][profileShade]),

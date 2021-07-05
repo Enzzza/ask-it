@@ -9,9 +9,9 @@ import (
 
 
 type MsgToUser struct{
-	OrginalPostID uint `json:"orginalPostID"`
-	SenderID uint		`json:"senderID"`
-	NewPostID uint		`json:"newPostID"`
+	OrginalPost []byte `json:"orginalPost"`
+	Sender []byte		`json:"sender"`
+	NewPost []byte		`json:"newPost"`
 }
 
 var RD *redis.Pool
@@ -41,8 +41,8 @@ func StoreMsgToRedis(userID string, msg []byte) error{
 	c := RD.Get()
 	defer c.Close()
 	
-	newMsg := MsgToUser{}
-	redisMessages  := []MsgToUser{}
+	var newMsg interface{}
+	var redisMessages []interface{}
 
 	err := json.Unmarshal(msg, &newMsg)
 	if err != nil {
@@ -75,18 +75,19 @@ func StoreMsgToRedis(userID string, msg []byte) error{
 	
 }
 
-func GetMsgFromRedis(userID string) ([]MsgToUser,error){
+func GetMsgFromRedis(userID string) ([]interface{},error){
 	c := RD.Get()
 	defer c.Close()
 	msg, err := redis.String(c.Do("GET",userID))
 	if err != nil{
 		return nil, err
 	}
-	redisMsg := []MsgToUser{}
+	var redisMsg []interface{}
 	err = json.Unmarshal([]byte(msg), &redisMsg)
 	if err != nil {
 		return nil, err
 	}
+
 	return redisMsg, nil
 	
 }

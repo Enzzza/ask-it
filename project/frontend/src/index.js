@@ -11,11 +11,16 @@ import { Spinner } from './components/utils/Spinner';
 import SpinnerContextProvider from './contexts/SpinnerContext';
 import { SnackbarProvider } from 'material-ui-snackbar-provider';
 import CustomSnackbar from './components/utils/snackbar/CustomSnackbar';
+import CssBaseline from "@material-ui/core/CssBaseline";
 
 const darkTheme = createMuiTheme({
   palette: {
     type: 'dark',
+    background:{
+      default:"#303030",
+    }
   },
+  
 });
 
 const queryClient = new QueryClient();
@@ -27,6 +32,7 @@ ReactDOM.render(
         <SpinnerContextProvider>
           <SnackbarProvider SnackbarComponent={CustomSnackbar}>
             <>
+              <CssBaseline />
               <App />
               <Spinner />
             </>

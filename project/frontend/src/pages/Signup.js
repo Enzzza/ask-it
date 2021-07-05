@@ -21,18 +21,7 @@ import UsernameGenerator from 'username-generator';
 import useCustomSnackbar from '../components/utils/snackbar/useCustomSnackbar';
 import { SpinnerContext } from '../contexts/SpinnerContext';
 
-function Copyright() {
-  return (
-    <Typography variant='body2' color='textSecondary' align='center'>
-      {'Copyright © '}
-      <Link color='inherit' href='#'>
-        Ask IT
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -58,6 +47,8 @@ export default function SignUp() {
   const classes = useStyles();
 
   const schema = yup.object().shape({
+    name: yup.string(),
+    surname: yup.string(),
     email: yup.string().email('Email is invalid').required('Email is required'),
     password: yup
       .string()
@@ -83,13 +74,13 @@ export default function SignUp() {
   const formSubmitHandler = async (data) => {
     let displayName = UsernameGenerator.generateUsername();
     setLoaderState(true);
-    let user = await auth.signup({...data,displayName});
+    let {msg,user,error} = await auth.signup({...data,displayName});
     
-    if (user) {
-      snackbar.showSuccess(`Welcome and have fun ${displayName}`,"Close",() => {})
+    if (!error) {
+      snackbar.showSuccess(`Welcome and have fun ${user.displayName}`,"Close",() => {})
       setRedirect(true);
     }else{
-      snackbar.showError("Something bad happend try again!","Close",() => {})
+      snackbar.showError(msg,"Close",() => {})
     }
 
     setLoaderState(false);
@@ -137,9 +128,6 @@ export default function SignUp() {
           </form>
         </FormProvider>
       </div>
-      <Box mt={5}>
-        <Copyright />
-      </Box>
     </Container>
   );
 }

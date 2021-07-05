@@ -4,11 +4,12 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import Badge from '@material-ui/core/Badge';
+
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Button from '@material-ui/core/Button';
 import NotificationBell from './NotificationBell';
+import NotificationList from './NotificationList';
 import { UserAvatar } from '../../avatar/UserAvatar';
 import {
   usePopupState,
@@ -30,19 +31,24 @@ export default function PrimarySearchAppBar() {
   const auth = useAuth();
   let history = useHistory();
   const classes = useStyles();
-  const popupState = usePopupState({ variant: 'popover', popupId: 'userMenu' });
-  const snackbar = useCustomSnackbar()
+  const accountPopupState = usePopupState({ variant: 'popover', popupId: 'userMenu' });
+  const notificationPopupState = usePopupState({variant:'popover', popupId:'userNotifications'})
+  const snackbar = useCustomSnackbar();
 
   const signout = async () => {
-    popupState.close();
-    await auth.signout();
-    snackbar.showInfo("Come again! :)","Close",()=>{})
+    accountPopupState.close();
+    let { msg, error } = await auth.signout();
+    if (!error) {
+      snackbar.showInfo(msg, 'Close', () => {});
+    } else {
+      snackbar.showError('Something bad happend! :/', 'Close', () => {});
+    }
   };
 
   const myAccount = () => {
-    popupState.close();
-    history.push("/account")
-  }
+    accountPopupState.close();
+    history.push('/account');
+  };
 
   return (
     <div className={classes.grow}>
@@ -51,23 +57,21 @@ export default function PrimarySearchAppBar() {
           <Typography variant='h6' noWrap>
             <Button onClick={() => history.push('/')}>Home</Button>
           </Typography>
-          
 
           <div className={classes.grow} />
 
           {auth.user ? (
             <div>
-              <IconButton color='inherit'>
-                <Badge badgeContent={0} color='secondary'>
-                  <NotificationBell notifications={auth.offlineMsg} />
-                </Badge>
+              <IconButton {...bindTrigger(notificationPopupState)} color='inherit'>
+                <NotificationBell notifications={auth.offlineMsg} />
               </IconButton>
-              <IconButton {...bindTrigger(popupState)} color='inherit'>
-                <UserAvatar
-                  user={auth.user}
-                />
+              <Menu {...bindMenu(notificationPopupState)}>
+                <NotificationList/>
+              </Menu>
+              <IconButton {...bindTrigger(accountPopupState)} color='inherit'>
+                <UserAvatar user={auth.user} />
               </IconButton>
-              <Menu {...bindMenu(popupState)}>
+              <Menu {...bindMenu(accountPopupState)}>
                 <MenuItem onClick={myAccount}>My account</MenuItem>
                 <MenuItem onClick={signout}>Logout</MenuItem>
               </Menu>

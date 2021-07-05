@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
 import useWebsocket from '../../../hooks/useWebsocket';
 import NotificationsIcon from '@material-ui/icons/Notifications';
@@ -10,6 +10,7 @@ export default function NotificationBell(props) {
   const { notifications } = useWebsocket({
     url: `ws://localhost:8000/ws/${auth.user.id}`,
   });
+  
 
   return (
     <Badge

@@ -68,8 +68,8 @@ func Register(c *fiber.Ctx) error {
 			"error": true,
 		})
 	}
-	msg := []cache.MsgToUser{}
-	return sendTokenResponse(user,c,"Success you are registered!",msg)
+	
+	return sendTokenResponse(user,c,"Success you are registered!",nil)
 	
 }
 
@@ -120,12 +120,9 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 	// Send msg that user recived while he was offline - use redis
-	messages, err:= cache.GetMsgFromRedis(strconv.Itoa(int(user.Id)))
-	if err !=  nil {
-		messages = []cache.MsgToUser{}
-	}
-
-
+	messages, _:= cache.GetMsgFromRedis(strconv.Itoa(int(user.Id)))
+	
+	cache.RemoveMsgFromRedis(strconv.Itoa(int(user.Id)))
 	return sendTokenResponse(user,c,"You are logged in!",messages)
 
 }
@@ -152,10 +149,16 @@ func User(c *fiber.Ctx) error {
 	}
 
 
+	// Send msg that user recived while he was offline - use redis
+	messages, _:= cache.GetMsgFromRedis(strconv.Itoa(int(user.Id)))
+	
+	cache.RemoveMsgFromRedis(strconv.Itoa(int(user.Id)))
+
 	return c.JSON(fiber.Map{
 		"msg": "Logged in user is:",
 		"user": user,
 		"error": false,
+		"messages":messages,
 	})
 }
 
@@ -284,15 +287,15 @@ func UpdatePassword(c *fiber.Ctx) error {
 
 	cookie := invalidateCookie()
 	c.Cookie(&cookie)
-	msg := []cache.MsgToUser{}
-	return sendTokenResponse(user,c,"Password updated!",msg)
+
+	return sendTokenResponse(user,c,"Password updated!",nil)
 
 }
 
 // Helper functions
 
 // Generate new token, create cookie and send response
-func sendTokenResponse(user models.User,c *fiber.Ctx,msg string, messages []cache.MsgToUser) error{
+func sendTokenResponse(user models.User,c *fiber.Ctx,msg string, messages []interface{}) error{
 
 
 	token, err := utils.GenerateNewAccessToken(user.Id)

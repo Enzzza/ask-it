@@ -1,5 +1,6 @@
 import React, { useState, useContext, createContext, useEffect } from 'react';
 import { authController } from '../api/auth';
+import { postController } from '../api/post';
 const authContext = createContext();
 
 export function ProvideAuth({ children }) {
@@ -15,48 +16,80 @@ function useProvideAuth() {
   const [offlineMsg,setOfflineMsg] = useState([])
   
   const signin = async (email, password) => {
-    let {user, messages} = await authController.signin(email, password);
+    let {msg,user,error, messages} = await authController.signin(email, password);
     
-    if (user) {
+    if (!error) {
       setUser(user);
-      setOfflineMsg([...offlineMsg,...messages]);
+      if(messages){
+        
+        setOfflineMsg([...offlineMsg,...messages]);
+      }
+      
     }
-    return user;
+    return {msg,user,error};
   };
 
   const signup = async (data) => {
-    let user = await authController.signup(data);
+    let {msg,user,error} = await authController.signup(data);
 
-    if (user) {
+    if (!error) {
       setUser(user);
     }
 
-    return user;
+    return {msg,user,error};
 
   };
     const signout = async () => {
-      let status = await authController.signout()
+      let {msg, error} = await authController.signout()
 
-      if(status){
+      if(!error){
         setUser(false);
-        return false;
+        setOfflineMsg([]);
       }
 
-      return status;
+      return {msg,error};
 
 
     };
 
     const me = async () => {
-      let user = await authController.me();
+      let {msg,user,error,messages} = await authController.me();
+      
+      if (!error) {
+        console.log("me ran");
+        setUser(user);
+        if(messages){
+          
+          setOfflineMsg([...offlineMsg,...messages]);
+        }
+      }
+    
+      return {msg,user,error};
   
-      if (user) {
+    };
+
+    const updateDetails = async (data) => {
+      
+      let {msg,user,error} = await authController.updateDetails(data);
+
+      if (!error) {
         setUser(user);
       }
 
-      return user;
-  
+      return {msg,user,error};
     };
+
+    const updatePassword = async (data) => {
+      let {msg,user,error} = await authController.updatePassword(data);
+
+      if (!error) {
+        setUser(user);
+      }
+
+      return {msg,user,error};
+    };
+
+
     useEffect(() => {
       me();
       
@@ -70,5 +103,7 @@ function useProvideAuth() {
     signup,
     signout,
     me,
+    updateDetails,
+    updatePassword,
   };
 }

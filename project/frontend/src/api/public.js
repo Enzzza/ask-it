@@ -6,11 +6,15 @@ export const publicController = {
       {
         headers: { 'Content-Type': 'application/json' },
       }
-    );
-    if (!response.ok) {
-      return false;
+    ).catch((err) => {
+      return { error: true, msg: 'Server is down, please try again later!' };
+    });
+
+    if (response.error) {
+      return response;
     }
     const content = await response.json();
-    return content.questions;
+
+    return content;
   },
 };

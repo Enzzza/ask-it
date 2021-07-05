@@ -100,6 +100,7 @@ func GetPosts(c *fiber.Ctx) error {
 		"msg": msg,
 		"posts": posts,
 		"error": false,
+		"count": len(posts),
 	})
 
 

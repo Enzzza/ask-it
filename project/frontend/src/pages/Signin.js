@@ -20,18 +20,6 @@ import SignInForm from '../components/forms/SignInForm';
 import useCustomSnackbar from '../components/utils/snackbar/useCustomSnackbar';
 import { SpinnerContext } from '../contexts/SpinnerContext';
 
-function Copyright() {
-  return (
-    <Typography variant='body2' color='textSecondary' align='center'>
-      {'Copyright © '}
-      <Link color='inherit' href='#'>
-        Ask IT
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -71,12 +59,12 @@ export default function SignIn() {
 
   const formSubmitHandler = async ({ email, password }) => {
     setLoaderState(true);
-    let user = await auth.signin(email, password);
-    if (user) {
+    let {msg,user,error} = await auth.signin(email, password);
+    if (!error) {
       snackbar.showSuccess(`Welcome ${user.displayName}`,"Close",() => {});
       setRedirect(true);
     }else{
-      snackbar.showError("Username or password not correct!","Close",() => {});
+      snackbar.showError(msg,"Close",() => {});
     }
       setLoaderState(false);
     
@@ -123,9 +111,6 @@ export default function SignIn() {
           </form>
         </FormProvider>
       </div>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
     </Container>
   );
 }

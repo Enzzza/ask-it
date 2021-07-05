@@ -36,12 +36,15 @@ export default function SignUpForm() {
             defaultValue=""
             render={({ field }) => (
               <TextField
+                {...field}
                 autoComplete='given-name'
                 variant='outlined'
                 fullWidth
                 id='name'
                 label='Name'
                 autoFocus
+                error={!!errors.name}
+                helperText={errors.name ? errors.name?.message : ''}
               />
             )}
           />
@@ -53,11 +56,14 @@ export default function SignUpForm() {
             defaultValue=""
             render={({ field }) => (
               <TextField
+                {...field}
                 autoComplete='family-name'
                 variant='outlined'
                 fullWidth
                 id='surname'
                 label='Surname'
+                error={!!errors.surname}
+                helperText={errors.surname ? errors.surname?.message : ''}
               />
             )}
           />

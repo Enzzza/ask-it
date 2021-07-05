@@ -13,16 +13,18 @@ export default function AccountProfileDetailsForm(props) {
           <Controller
             name='name'
             control={control}
-            defaultValue=''
+            defaultValue={props.user.name}
             render={({ field }) => (
               <TextField
+                {...field}
                 autoComplete='given-name'
                 variant='outlined'
                 fullWidth
                 id='name'
                 label='Name'
                 autoFocus
-                value={props.user.name}
+                error={!!errors.name}
+                helperText={errors.name ? errors.name?.message : ''}
               />
             )}
           />
@@ -31,15 +33,17 @@ export default function AccountProfileDetailsForm(props) {
           <Controller
             name='surname'
             control={control}
-            defaultValue=''
+            defaultValue={props.user.surname}
             render={({ field }) => (
               <TextField
+                {...field}
                 autoComplete='family-name'
                 variant='outlined'
                 fullWidth
                 id='surname'
                 label='Surname'
-                value={props.user.surname}
+                error={!!errors.surname}
+                helperText={errors.surname ? errors.surname?.message : ''}
               />
             )}
           />
@@ -48,7 +52,7 @@ export default function AccountProfileDetailsForm(props) {
           <Controller
             name='email'
             control={control}
-            defaultValue=''
+            defaultValue={props.user.email}
             render={({ field }) => (
               <TextField
                 {...field}
@@ -57,7 +61,6 @@ export default function AccountProfileDetailsForm(props) {
                 id='email'
                 label='Email Address'
                 autoComplete='email'
-                value={props.user.email}
                 error={!!errors.email}
                 helperText={errors.email ? errors.email?.message : ''}
               />

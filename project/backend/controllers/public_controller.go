@@ -31,6 +31,7 @@ func GetPublicQuestions(c *fiber.Ctx) error {
 		"msg": fmt.Sprintf("Number of question found %v", len(publicQuestions)),
 		"questions": publicQuestions,
 		"error": false,
+		"count": len(publicQuestions),
 	})
 }
 
@@ -65,6 +66,7 @@ func GetPaginatedPublicQuestions(c *fiber.Ctx) error {
 		"error": false,
 		"prev": prev,
 		"next": next,
+		"count": len(publicQuestions),
 	})
 
 }
@@ -93,6 +95,7 @@ func GetAnswersForQuestion(c *fiber.Ctx) error {
 		"msg": fmt.Sprintf("Number of answers found for question %v", len(answers)),
 		"answers": answers,
 		"error": false,
+		"count": len(answers),
 	})
 	
 }
@@ -119,6 +122,7 @@ func GetUsersWithMostAnswers(c *fiber.Ctx) error {
 		"msg": fmt.Sprintf("Users who have one or more answers %v", len(answers)),
 		"answers": answers,
 		"error": false,
+		"count": len(answers),
 	})
 }
 
@@ -147,5 +151,6 @@ func GetPublicQuestionsById(c *fiber.Ctx) error {
 		"msg": fmt.Sprintf("Number of question found %v", len(userQuestions)),
 		"questions": userQuestions,
 		"error": false,
+		"count": len(userQuestions),
 	})
 }
