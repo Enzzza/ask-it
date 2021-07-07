@@ -73,9 +73,22 @@ func SetupWebsocket(app *fiber.App) {
 
 		// Every websocket connection has an optional session key => value storage
 		kws.SetAttribute("user_id", userId)
+		
+		// Send msg that user recived while he was offline - use redis
+		messages, _:= cache.GetMsgFromRedis(userId)
 
-		kws.Emit([]byte(fmt.Sprintf("Hello user: %s with UUID: %s", userId, kws.UUID)))
+		json, err := json.Marshal(messages)
+		if err != nil {
+		fmt.Println("Couldn't convert to json")
+			json = []byte("")
+		}
+		
+		cache.RemoveMsgFromRedis(userId)
 
+		if messages != nil{
+			kws.Emit(json)
+		}
+		
 	}))
 
 }

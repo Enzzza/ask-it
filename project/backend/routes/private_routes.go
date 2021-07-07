@@ -29,9 +29,10 @@ func PrivateRoutes(a *fiber.App) {
 	//  USER ROUTES
 	route.Get("/user/questions",middleware.JWTProtected(),middleware.SetClaims(), controllers.GetUserQuestions)
 	
-	route.Get("user/questions/:page-:pageSize",middleware.JWTProtected(),middleware.SetClaims(),controllers.GetPaginatedUserQuestions)
+	route.Get("/user/questions/:page-:pageSize",middleware.JWTProtected(),middleware.SetClaims(),controllers.GetPaginatedUserQuestions)
 
-	route.Get("/user/answers/",middleware.JWTProtected(),middleware.SetClaims(), controllers.GetUserAnswers)
+	route.Get("/user/answers",middleware.JWTProtected(),middleware.SetClaims(), controllers.GetUserAnswers)
+
 
 	// SCORE ROUTES
 	route.Post("/scores/add",middleware.JWTProtected(),middleware.SetClaims(),controllers.AddScore)

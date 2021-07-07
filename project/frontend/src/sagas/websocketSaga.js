@@ -2,8 +2,6 @@
 import Immutable from 'immutable';
 
 async function connect(state, payload, dispatch) {
-  const connected = state.get('connected');
-  console.log(connected);
   const websocket = new WebSocket(`ws://localhost:8000/ws/${payload.id}`);
 
   websocket.onopen = function (evt) {
@@ -21,16 +19,13 @@ async function connect(state, payload, dispatch) {
     });
   };
   websocket.onmessage = function (evt) {
-    if (!evt.data.includes('Hello user:')) {
-      console.log(evt.data);
-      // Call a async saga function with new notification
-      dispatch({
-        type: 'addNotification',
-        payload: {
-          notification: JSON.parse(evt.data),
-        },
-      });
-    }
+    // Call a async saga function with new notification
+    dispatch({
+      type: 'addNotifications',
+      payload: {
+        notifications: JSON.parse(evt.data),
+      },
+    });
   };
   websocket.onerror = function (evt) {};
   // Save current websocket in state
@@ -42,23 +37,33 @@ async function connect(state, payload, dispatch) {
 }
 
 // Close socket when user logout
-async function disconnect(state,payload,dispatch){
-    const websocket = state.get('websocket');
-    websocket.close();
-    dispatch({
-        type:'merge',
-        payload: {
-            notifications: []
-        },
-    })
-}
-
-// Declare remote async method that will be called from Server
-async function addNotification(state, payload, dispatch) {
+async function disconnect(state, payload, dispatch) {
+  const websocket = state.get('websocket');
+  websocket.close();
   dispatch({
     type: 'merge',
     payload: {
-      notifications: [...state.get('notifications'), payload.notification],
+      notifications: [],
+    },
+  });
+}
+
+// Add offline notifications
+async function addNotifications(state, payload, dispatch) {
+  // Check if payload is array
+  let storedNotifications = state.get('notifications')
+  let recivedNotifications;
+
+  if(Array.isArray(payload.notifications)){
+    recivedNotifications = [...storedNotifications,...payload.notifications]
+  }else {
+    recivedNotifications = [...storedNotifications,payload.notifications]
+  }
+
+  dispatch({
+    type: 'merge',
+    payload: {
+      notifications: recivedNotifications,
     },
   });
 }
@@ -75,23 +80,11 @@ async function deleteNotificationById(state, payload, dispatch) {
   });
 }
 
-// Add notifications that user recived while offline
-async function addOfflineNotifications(state, payload, dispatch) {
-    console.log(payload);
-    // dispatch({
-    //   type: 'merge',
-    //   payload: {
-    //     notifications: [...state.get('notifications'), ...(payload.notifications)],
-    //   },
-    // });
-  }
-
 const WEBSOCKET_SAGA = {
   connect,
   disconnect,
-  addNotification,
+  addNotifications,
   deleteNotificationById,
-  addOfflineNotifications,
 };
 
 const initialValues = Immutable.fromJS({

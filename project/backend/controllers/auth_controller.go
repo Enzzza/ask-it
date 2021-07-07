@@ -2,11 +2,9 @@ package controllers
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
-	"github.com/Enzzza/ask-it/project/backend/cache"
 	"github.com/Enzzza/ask-it/project/backend/database"
 	"github.com/Enzzza/ask-it/project/backend/models"
 	"github.com/Enzzza/ask-it/project/backend/utils"
@@ -69,7 +67,7 @@ func Register(c *fiber.Ctx) error {
 		})
 	}
 	
-	return sendTokenResponse(user,c,"Success you are registered!",nil)
+	return sendTokenResponse(user,c,"Success you are registered!")
 	
 }
 
@@ -119,11 +117,8 @@ func Login(c *fiber.Ctx) error {
 			"error": true,
 		})
 	}
-	// Send msg that user recived while he was offline - use redis
-	messages, _:= cache.GetMsgFromRedis(strconv.Itoa(int(user.Id)))
 	
-	cache.RemoveMsgFromRedis(strconv.Itoa(int(user.Id)))
-	return sendTokenResponse(user,c,"You are logged in!",messages)
+	return sendTokenResponse(user,c,"You are logged in!")
 
 }
 
@@ -149,16 +144,10 @@ func User(c *fiber.Ctx) error {
 	}
 
 
-	// Send msg that user recived while he was offline - use redis
-	messages, _:= cache.GetMsgFromRedis(strconv.Itoa(int(user.Id)))
-	
-	cache.RemoveMsgFromRedis(strconv.Itoa(int(user.Id)))
-
 	return c.JSON(fiber.Map{
 		"msg": "Logged in user is:",
 		"user": user,
 		"error": false,
-		"messages":messages,
 	})
 }
 
@@ -288,14 +277,14 @@ func UpdatePassword(c *fiber.Ctx) error {
 	cookie := invalidateCookie()
 	c.Cookie(&cookie)
 
-	return sendTokenResponse(user,c,"Password updated!",nil)
+	return sendTokenResponse(user,c,"Password updated!")
 
 }
 
 // Helper functions
 
 // Generate new token, create cookie and send response
-func sendTokenResponse(user models.User,c *fiber.Ctx,msg string, messages []interface{}) error{
+func sendTokenResponse(user models.User,c *fiber.Ctx,msg string) error{
 
 
 	token, err := utils.GenerateNewAccessToken(user.Id)
@@ -316,14 +305,11 @@ func sendTokenResponse(user models.User,c *fiber.Ctx,msg string, messages []inte
 	}
 
 	c.Cookie(&cookie)
-	id := strconv.Itoa(int(user.Id))
 
-	cache.RemoveMsgFromRedis(id)
 	return c.JSON(fiber.Map{
 		"msg": msg,
 		"user": user,
 		"error": false,
-		"messages": messages,
 	})
 
 }

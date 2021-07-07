@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -7,8 +7,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import { UserAvatar } from '../../avatar/UserAvatar';
 import Typography from '@material-ui/core/Typography';
-import { useAuth } from '../../../contexts/AuthContext';
 import { useSagaState } from 'react-context-saga';
+import { Link as RouterLink } from 'react-router-dom';
+import Link from '@material-ui/core/Link';
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
@@ -21,21 +22,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function NotificationList(props) {
+export default function NotificationList() {
   const classes = useStyles();
-  const auth = useAuth();
-  const [state, dispatch] = useSagaState('websocket');
+
+  const [state] = useSagaState('websocket');
 
   const truncate = (str, n) => {
     return str.length > n ? str.substr(0, n - 1) + '...' : str;
   };
 
-  const postClickHandler = (event,id) => {
-    console.log(event);
-    console.log('post clicked with id ', id)
-  }
+  const postClickHandler = (id) => {
+    console.log('post clicked with id ', id);
+  };
 
-  if (!props.notifications.length && (!(state.get('notifications')).length)) {
+  if (!state.get('notifications').length) {
     return (
       <List className={classes.root}>
         <ListItem alignItems='flex-start'>
@@ -46,9 +46,13 @@ export default function NotificationList(props) {
   } else {
     return (
       <List className={classes.root}>
-        {[...props.notifications, ...state.get('notifications')].map((item) => (
-          <>
-            <ListItem alignItems='flex-start' key={(item.newPost.id).toString()} onClick={(event) => postClickHandler(event, item.orginalPost.id)}>
+        {[...state.get('notifications')].map((item) => (
+          <Link component={RouterLink} to="/">
+            <ListItem
+              alignItems='flex-start'
+              key={item.newPost.id.toString()}
+              onClick={postClickHandler(item.newPost.id)}
+            >
               <ListItemAvatar>
                 <UserAvatar user={item.sender} />
               </ListItemAvatar>
@@ -69,8 +73,9 @@ export default function NotificationList(props) {
                 }
               />
             </ListItem>
+
             <Divider />
-          </>
+          </Link>
         ))}
       </List>
     );

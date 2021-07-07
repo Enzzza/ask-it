@@ -4,11 +4,14 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import Badge from '@material-ui/core/Badge';
 import { useSagaState } from 'react-context-saga';
 
-export default function NotificationBell(props) {
+export default function NotificationBell() {
   const auth = useAuth();
   const [state, dispatch] = useSagaState('websocket');
   
+  
+
   useEffect(() => {
+    console.log("connect!");
     dispatch({ type: 'connect', payload: { id: auth.user.id } });
     return () => {
       console.log('disconect');
@@ -19,7 +22,7 @@ export default function NotificationBell(props) {
   return (
     <Badge
       badgeContent={
-        props.notifications.length + (state.get('notifications')).length
+        (state.get('notifications')).length
       }
       color='secondary'
     >

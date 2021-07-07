@@ -38,4 +38,5 @@ export const userController = {
 
     return content;
   },
+  
 };
