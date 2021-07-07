@@ -1,23 +1,29 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
-import useWebsocket from '../../../hooks/useWebsocket';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Badge from '@material-ui/core/Badge';
+import { useSagaState } from 'react-context-saga';
 
 export default function NotificationBell(props) {
   const auth = useAuth();
-
-  const { notifications } = useWebsocket({
-    url: `ws://localhost:8000/ws/${auth.user.id}`,
-  });
+  const [state, dispatch] = useSagaState('websocket');
   
+  useEffect(() => {
+    dispatch({ type: 'connect', payload: { id: auth.user.id } });
+    return () => {
+      console.log('disconect');
+      dispatch({ type: 'disconnect' });
+    };
+  }, []);
 
   return (
     <Badge
-      badgeContent={props.notifications.length + notifications.length}
+      badgeContent={
+        props.notifications.length + (state.get('notifications')).length
+      }
       color='secondary'
     >
-      <NotificationsIcon style={{ fontSize: 25 }}/>
+      <NotificationsIcon style={{ fontSize: 25 }} />
     </Badge>
   );
 }

@@ -1,6 +1,5 @@
 import React, { useState, useContext, createContext, useEffect } from 'react';
 import { authController } from '../api/auth';
-import { postController } from '../api/post';
 const authContext = createContext();
 
 export function ProvideAuth({ children }) {

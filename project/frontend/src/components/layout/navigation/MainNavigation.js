@@ -66,7 +66,7 @@ export default function PrimarySearchAppBar() {
                 <NotificationBell notifications={auth.offlineMsg} />
               </IconButton>
               <Menu {...bindMenu(notificationPopupState)}>
-                <NotificationList/>
+                <NotificationList notifications={auth.offlineMsg}/>
               </Menu>
               <IconButton {...bindTrigger(accountPopupState)} color='inherit'>
                 <UserAvatar user={auth.user} />

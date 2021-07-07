@@ -1,11 +1,9 @@
-import React, { useState,useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { Redirect, Link as RouterLink } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
@@ -19,6 +17,7 @@ import SignInForm from '../components/forms/SignInForm';
 
 import useCustomSnackbar from '../components/utils/snackbar/useCustomSnackbar';
 import { SpinnerContext } from '../contexts/SpinnerContext';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -52,22 +51,26 @@ export default function SignIn() {
   const methods = useForm({ resolver: yupResolver(schema) });
 
   const [redirect, setRedirect] = useState(false);
-  const {isLoading,setLoaderState} = useContext(SpinnerContext);
-  const snackbar = useCustomSnackbar()
+  const { isLoading, setLoaderState } = useContext(SpinnerContext);
+  const snackbar = useCustomSnackbar();
 
   const auth = useAuth();
+  
 
   const formSubmitHandler = async ({ email, password }) => {
     setLoaderState(true);
-    let {msg,user,error} = await auth.signin(email, password);
+    let { msg, user, error } = await auth.signin(email, password);
     if (!error) {
-      snackbar.showSuccess(`Welcome ${user.displayName}`,"Close",() => {});
+      snackbar.showSuccess(`Welcome ${user.displayName}`, 'Close', () => {});
       setRedirect(true);
-    }else{
-      snackbar.showError(msg,"Close",() => {});
-    }
-      setLoaderState(false);
     
+  
+      
+        
+    } else {
+      snackbar.showError(msg, 'Close', () => {});
+    }
+    setLoaderState(false);
   };
 
   if (redirect) {

@@ -13,6 +13,7 @@ import { SnackbarProvider } from 'material-ui-snackbar-provider';
 import CustomSnackbar from './components/utils/snackbar/CustomSnackbar';
 import CssBaseline from "@material-ui/core/CssBaseline";
 
+
 const darkTheme = createMuiTheme({
   palette: {
     type: 'dark',
