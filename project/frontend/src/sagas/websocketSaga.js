@@ -72,7 +72,7 @@ async function addNotifications(state, payload, dispatch) {
 async function deleteNotificationById(state, payload, dispatch) {
   let newNotifications = state
     .get('notifications')
-    .filter((notification) => notification.orginalPost.id !== payload.id);
+    .filter((notification) => notification.newPost.id !== payload.id);
   console.log(newNotifications);
   dispatch({
     type: 'merge',

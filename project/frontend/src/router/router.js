@@ -8,6 +8,7 @@ import Account from '../pages/Account';
 import Profile from '../pages/Profile';
 import NotFound from '../pages/NotFound';
 import PrivateRoute from './PrivateRoute';
+import Posts from '../pages/Posts';
 import {useAuth} from "../contexts/AuthContext";
 export default function Router() {
   const auth = useAuth();
@@ -27,8 +28,11 @@ export default function Router() {
           <Route path='/sign-up'>
             <SignUp />
           </Route>
-          <Route path='/user/profile/:id'>
+          <Route path='/users/profile/:id'>
             <Profile />
+          </Route>
+          <Route path='/posts/:id'>
+            <Posts />
           </Route>
           <PrivateRoute path='/account'>
             <Account />

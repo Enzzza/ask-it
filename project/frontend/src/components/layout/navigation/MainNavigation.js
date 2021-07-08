@@ -8,8 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Button from '@material-ui/core/Button';
-import NotificationBell from './NotificationBell';
-import NotificationList from './NotificationList';
+import Notification from './Notification';
 import { UserAvatar } from '../../avatar/UserAvatar';
 import {
   usePopupState,
@@ -32,7 +31,7 @@ export default function PrimarySearchAppBar() {
   let history = useHistory();
   const classes = useStyles();
   const accountPopupState = usePopupState({ variant: 'popover', popupId: 'userMenu' });
-  const notificationPopupState = usePopupState({variant:'popover', popupId:'userNotifications'})
+ 
   const snackbar = useCustomSnackbar();
 
   const signout = async () => {
@@ -62,12 +61,7 @@ export default function PrimarySearchAppBar() {
 
           {auth.user ? (
             <div>
-              <IconButton {...bindTrigger(notificationPopupState)} color='inherit'>
-                <NotificationBell/>
-              </IconButton>
-              <Menu {...bindMenu(notificationPopupState)}>
-                <NotificationList/>
-              </Menu>
+              <Notification/>
               <IconButton {...bindTrigger(accountPopupState)} color='inherit'>
                 <UserAvatar user={auth.user} />
               </IconButton>
