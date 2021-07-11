@@ -33,6 +33,7 @@ func PrivateRoutes(a *fiber.App) {
 
 	route.Get("/user/answers",middleware.JWTProtected(),middleware.SetClaims(), controllers.GetUserAnswers)
 
+	route.Get("/user/votes",middleware.JWTProtected(),middleware.SetClaims(),controllers.GetUserVotes)
 
 	// SCORE ROUTES
 	route.Post("/scores/add",middleware.JWTProtected(),middleware.SetClaims(),controllers.AddScore)

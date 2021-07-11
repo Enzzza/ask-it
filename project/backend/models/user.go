@@ -4,6 +4,8 @@ import (
 	"time"
 
 	"gorm.io/gorm"
+	"gorm.io/datatypes"
+
 )
 
 
@@ -20,7 +22,8 @@ type User struct {
 	ProfileShade string         `json:"profileShade" gorm:"column:profile_shade"`
 	Password  []byte         	`json:"-"`
 	AnswerCount uint			`json:"answerCount"`
-	Posts []*Post				`gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;foreignKey:UserID"`
+	Votes datatypes.JSON		`json:"votes"`
+	Posts []*Post				`json:"posts" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;foreignKey:UserID"`
 }	
 
 

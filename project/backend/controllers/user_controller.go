@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -97,7 +98,7 @@ func GetPaginatedUserQuestions(c *fiber.Ctx) error {
 // @Produce json
 // @Success 200 {array} models.Post
 // @Security ApiKeyAuth
-// @Router /v1/user/answers/ [get]
+// @Router /v1/user/answers [get]
 func GetUserAnswers(c *fiber.Ctx) error {
 	id, convErr := strconv.Atoi(fmt.Sprintf("%v", c.Locals("id")))
 	if convErr != nil {
@@ -144,5 +145,36 @@ func GetUserProfile(c *fiber.Ctx) error {
 		"msg": fmt.Sprintf("User with id %v: ",id),
 		"user": user,
 		"error": false,
+	})
+}
+
+// GetUserVotes func will return user votes
+// @Description Return all user votes
+// @Summary Return all votes for logged in user
+// @Tags User
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Votes
+// @Security ApiKeyAuth
+// @Router /v1/user/votes [get]
+func GetUserVotes(c *fiber.Ctx) error {
+	var user models.User
+	id := fmt.Sprintf("%v", c.Locals("id"))
+
+	if result := database.DB.Where("id = ?", id).First(&user); result.Error != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": "Couldn't find user!",
+			"error": true,
+		})
+	}
+
+	var votes models.Votes
+	json.Unmarshal(user.Votes,&votes)
+
+	return c.JSON(fiber.Map{
+		"msg": fmt.Sprintf("Number of votes found %v", len(votes.Posts)),
+		"votes": votes.Posts,
+		"error": false,
+		"count": len(votes.Posts),
 	})
 }

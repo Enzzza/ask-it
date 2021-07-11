@@ -39,7 +39,7 @@ export default function Notification() {
   });
   const classes = useStyles();
 
-  const [state,dispatch] = useSagaState('websocket');
+  const [state, dispatch] = useSagaState('websocket');
 
   const truncate = (str, n) => {
     return str.length > n ? str.substr(0, n - 1) + '...' : str;
@@ -60,42 +60,43 @@ export default function Notification() {
         ) : (
           <List className={classes.root}>
             {[...state.get('notifications')].map((item) => (
-              <>
-                <ListItem
-                  alignItems='flex-start'
-                  key={item.newPost.id.toString()}
-                  button
-                  component={RouterLink}
-                  to={`/posts/${item.orginalPost.id}`}
-                  onClick={() => {
-                    notificationPopupState.close();
-                    dispatch({ type: 'deleteNotificationById', payload: { id: item.newPost.id } });
-                    console.log(item.newPost.id);
-                  }}
-                >
-                  <ListItemAvatar>
-                    <UserAvatar user={item.sender} />
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={truncate(item.orginalPost.title, 30)}
-                    secondary={
-                      <React.Fragment>
-                        <Typography
-                          component='span'
-                          variant='body2'
-                          className={classes.inline}
-                          color='textPrimary'
-                        >
-                          {item.sender.name} {item.sender.surname}
-                        </Typography>
-                        {` — ${truncate(item.newPost.body, 50)}`}
-                      </React.Fragment>
-                    }
-                  />
-                </ListItem>
-                <Divider variant='inset' component='li' />
-              </>
+              <ListItem
+                alignItems='flex-start'
+                key={item.newPost.id.toString()}
+                button
+                component={RouterLink}
+                to={`/posts/${item.orginalPost.id}/${item.newPost.id}`}
+                onClick={() => {
+                  notificationPopupState.close();
+                  dispatch({
+                    type: 'deleteNotificationById',
+                    payload: { id: item.newPost.id },
+                  });
+                  console.log(item.newPost.id);
+                }}
+              >
+                <ListItemAvatar>
+                  <UserAvatar user={item.sender} />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={truncate(item.orginalPost.title, 30)}
+                  secondary={
+                    <React.Fragment>
+                      <Typography
+                        component='span'
+                        variant='body2'
+                        className={classes.inline}
+                        color='textPrimary'
+                      >
+                        {item.sender.name} {item.sender.surname}
+                      </Typography>
+                      {` — ${truncate(item.newPost.body, 50)}`}
+                    </React.Fragment>
+                  }
+                />
+              </ListItem>
             ))}
+            <Divider variant='inset' component='li' />
           </List>
         )}
       </Menu>

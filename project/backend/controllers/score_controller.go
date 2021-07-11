@@ -1,14 +1,19 @@
 package controllers
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 
 	"github.com/Enzzza/ask-it/project/backend/database"
 	"github.com/Enzzza/ask-it/project/backend/models"
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
+
+
+
 
 // AddScore func will increment or decrement score count by one
 // @Description Increment or decrement score
@@ -29,7 +34,37 @@ func AddScore(c *fiber.Ctx) error {
 			"error" : true,
 		})
 	}
+
+
 	id:= uint(data["postID"])
+
+	// Find voter
+	var user models.User
+	userId := fmt.Sprintf("%v", c.Locals("id"))
+
+
+	if result := database.DB.Where("id = ?", userId).First(&user); result.Error != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": "Couldn't add view!",
+			"error": true,
+		})
+	}
+
+	var votes models.Votes
+	json.Unmarshal(user.Votes,&votes)
+
+	for _, v := range votes.Posts{
+		
+		if v.Id == id {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"msg": "You already voted for this post!",
+				"error": true,
+			})
+		}
+	}
+	
+
+	
 	vote:= data["vote"]
 	
 	if vote < -1 || vote > 1{
@@ -50,8 +85,47 @@ func AddScore(c *fiber.Ctx) error {
         if err := tx.Model(&post).Update("score", post.Score + (vote)).Error; err != nil {
             return err
         }
+
+		
+		// Variable for storing new and old posts
+		var newVotes string
+
+		// Variable for storing id of post and given vote
+
+		var newVote models.Vote
+		newVote.Id =  id
+		newVote.Vote = vote
+
+		// Marshal post and add that string to newVotes
+		pm, errPm := json.Marshal(models.Votes{[](models.Vote){newVote}})
+		if errPm == nil{
+			newVotes = string(pm)
+		}
+
+		// Check if there is old values in votes if there is any append new post to it
+		if user.Votes != nil {
+
+			
+			
+			votes.Posts = append(votes.Posts, newVote)
+			v,errM := json.Marshal(votes)
+			if errM == nil{
+				newVotes = string(v)	
+			}
+			
+
+		}
+		
+		
+		// Add votes array to database
+		jsonMap := map[string]interface{}{"Votes": datatypes.JSON(newVotes)}
+		if err := tx.Model(&user).Select("Votes").Updates(jsonMap).Error; err != nil {
+			return err
+		}
+		
 		return nil
 	})
+
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"msg":   "Couldn't add view",
@@ -59,6 +133,7 @@ func AddScore(c *fiber.Ctx) error {
 		})
 	}
 
+	
 	return c.JSON(fiber.Map{
 		"msg": "Vote added",
 		"error": false,

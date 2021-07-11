@@ -31,7 +31,7 @@ export default function Router() {
           <Route path='/users/profile/:id'>
             <Profile />
           </Route>
-          <Route path='/posts/:id'>
+          <Route path='/posts/:id/:answerId?'>
             <Posts />
           </Route>
           <PrivateRoute path='/account'>
