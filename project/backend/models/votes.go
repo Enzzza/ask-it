@@ -6,5 +6,6 @@ type Vote struct{
 }
 
 type Votes struct {
-	Posts []Vote `json:"posts"`
+	Posts map[string]Vote `json:"posts"`
 }
+

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/Enzzza/ask-it/project/backend/database"
 	"github.com/Enzzza/ask-it/project/backend/models"
@@ -11,9 +12,6 @@ import (
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
-
-
-
 
 // AddScore func will increment or decrement score count by one
 // @Description Increment or decrement score
@@ -53,17 +51,15 @@ func AddScore(c *fiber.Ctx) error {
 	var votes models.Votes
 	json.Unmarshal(user.Votes,&votes)
 
-	for _, v := range votes.Posts{
-		
-		if v.Id == id {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"msg": "You already voted for this post!",
-				"error": true,
-			})
-		}
+	// Check if user already voted for post 
+	if _, ok := votes.Posts[strconv.Itoa(int(id))]; ok {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": "You already voted for this post!",
+			"error": true,
+		})
 	}
 	
-
+	
 	
 	vote:= data["vote"]
 	
@@ -88,37 +84,29 @@ func AddScore(c *fiber.Ctx) error {
 
 		
 		// Variable for storing new and old posts
-		var newVotes string
+		var newVotesStringified string
 
 		// Variable for storing id of post and given vote
-
 		var newVote models.Vote
 		newVote.Id =  id
 		newVote.Vote = vote
+		// New map value
+		if len(votes.Posts) == 0 {
+			votes.Posts = make(map[string]models.Vote)
+		}
+		
+		votes.Posts[strconv.Itoa(int(id))] = newVote
+
 
 		// Marshal post and add that string to newVotes
-		pm, errPm := json.Marshal(models.Votes{[](models.Vote){newVote}})
+		pm, errPm := json.Marshal(votes)
 		if errPm == nil{
-			newVotes = string(pm)
-		}
-
-		// Check if there is old values in votes if there is any append new post to it
-		if user.Votes != nil {
-
-			
-			
-			votes.Posts = append(votes.Posts, newVote)
-			v,errM := json.Marshal(votes)
-			if errM == nil{
-				newVotes = string(v)	
-			}
-			
-
+			newVotesStringified = string(pm)
 		}
 		
 		
 		// Add votes array to database
-		jsonMap := map[string]interface{}{"Votes": datatypes.JSON(newVotes)}
+		jsonMap := map[string]interface{}{"Votes": datatypes.JSON(newVotesStringified)}
 		if err := tx.Model(&user).Select("Votes").Updates(jsonMap).Error; err != nil {
 			return err
 		}
