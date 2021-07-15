@@ -12,26 +12,19 @@ import { UserAvatar } from '../avatar/UserAvatar';
 import Email from '@material-ui/icons/Email';
 import Question from '@material-ui/icons/Help';
 import Answer from '@material-ui/icons/QuestionAnswer';
-import { teal, lightBlue, deepOrange } from '@material-ui/core/colors';
+import { teal, lightBlue, deepOrange} from '@material-ui/core/colors';
+import IconButton from '@material-ui/core/IconButton';
+import { useHistory } from "react-router-dom";
+import GetHumanizedTime from '../../utils/GetHumanizedTime';
 
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import relativeTime from 'dayjs/plugin/relativeTime';
-dayjs.extend(duration);
-dayjs.extend(relativeTime);
 
-const AccountProfile = (props) => {
-  if (!props.user && !props.loading) {
-    return <p>User not found</p>;
-  } else if (props.loading) {
-    return <div>Loading....</div>;
-  }
+const AccountProfile = (props,context) => {
+  const history = useHistory();
+  
 
   let user = props.user;
   let displayName = user.displayName;
-  let now = dayjs();
-  let memberSince = dayjs(user.createdAt).format('YYYY/MM/DD');
-  let timePassed = dayjs(memberSince).from(now);
+  let timePassed = GetHumanizedTime(user.createdAt);
   let email = user.email;
   // get it from db
   let questions = props.questions ? props.questions : 0;
@@ -103,7 +96,9 @@ const AccountProfile = (props) => {
                 <Avatar
                   style={{ backgroundColor: teal[600], height: 56, width: 56 }}
                 >
-                  <Question />
+                  <IconButton color='inherit' onClick={() => history.push(`/users/questions/${user.id}`)}>
+                    <Question />
+                  </IconButton>
                 </Avatar>
               </Grid>
             </Grid>

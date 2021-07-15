@@ -1,8 +1,9 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import Scroll from 'react-scroll';
+import AnswersContainer from '../components/answers/AnswersContainer';
 
-export default function Posts() {
+export default function Answers() {
   // let scroll = Scroll.animateScroll;
   // scroll.scrollTo(100, {
   //   duration: 800,
@@ -12,8 +13,6 @@ export default function Posts() {
   // });
   let { id, answerId } = useParams();
   return (
-    <div>
-      Post with id:{id} and answerId: {answerId}
-    </div>
+    <AnswersContainer/>
   );
 }

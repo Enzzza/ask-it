@@ -18,7 +18,7 @@ import (
 // @Tags Post
 // @Accept json
 // @Produce json
-// @Param title body string true "Title"
+// @Param title body string false "Title"
 // @Param body body string true "Body"
 // @Param parentID body integer false "Parent ID"
 // @Success 201 {object} models.Post
@@ -195,7 +195,7 @@ func DeletePost(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param id path integer true "Post ID"
-// @Param title body string true "Title"
+// @Param title body string false "Title"
 // @Param body body string true "Body"
 // @Success 200 {string} status "ok"
 // @Security ApiKeyAuth

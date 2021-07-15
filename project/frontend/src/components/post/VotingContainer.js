@@ -15,7 +15,7 @@ const useStyles = makeStyles({
     color: grey[200],
   },
 });
-export default function VotingContainer() {
+export default function VotingContainer(props) {
   const classes = useStyles();
   return (
     <Box
@@ -32,7 +32,7 @@ export default function VotingContainer() {
         marginBottom='8px'
       >
         <Box component='span'>
-          <KeyboardArrowUp />
+          <KeyboardArrowUp/>
         </Box>
         <Box component='span' className={classes.statsText} marginTop="8px" marginBottom="8px">
           0

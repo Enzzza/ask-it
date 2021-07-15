@@ -54,7 +54,7 @@ export default function Notification() {
         {!state.get('notifications').length ? (
           <List className={classes.root}>
             <ListItem alignItems='flex-start'>
-              <ListItemText primary='No notifications yet!'></ListItemText>
+              <ListItemText primary='No new notifications!'></ListItemText>
             </ListItem>
           </List>
         ) : (

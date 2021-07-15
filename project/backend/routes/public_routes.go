@@ -45,5 +45,6 @@ func PublicRoutes(a *fiber.App) {
 
 	// USER ROUTES
 	route.Get("/user/profile/:id", controllers.GetUserProfile)
+	route.Get("/user/:userID/questions/:page-:pageSize",controllers.GetPaginatedUserQuestions)
 
 }	

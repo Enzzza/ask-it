@@ -47,17 +47,17 @@ func GetUserQuestions(c *fiber.Ctx) error {
 
 // GetPaginatedUserQuestions func will return all questions in range
 // @Description Return all questions in range 
-// @Summary Return all questions in range sent by user
+// @Summary Return all questions in range by userID
 // @Tags User
 // @Accept json
 // @Produce json
+// @Param userID path integer  true "User Id"
 // @Param page path integer  true "Page"
 // @Param pageSize path integer  true "Page Size"
 // @Success 200 {array} models.Post
-// @Security ApiKeyAuth
-// @Router /v1/user/questions/:page-:pageSize [get]
+// @Router /v1/user/:userID/questions/:page-:pageSize [get]
 func GetPaginatedUserQuestions(c *fiber.Ctx) error {
-	id, convErr := strconv.Atoi(fmt.Sprintf("%v", c.Locals("id")))
+	id, convErr := strconv.Atoi(c.Params("userID"))
 	if convErr != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg" : "Couldn't parse UserID",

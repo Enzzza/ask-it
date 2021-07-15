@@ -1,20 +1,50 @@
 export const publicController = {
-  async GetPublicQuestionsById(userID) {
-    // @Router /v1/public/questions/:userID [get]
+  
+  async getPublicQuestionsById(userID) {
     const response = await fetch(
       `http://localhost:8000/api/v1/public/questions/${userID}`,
       {
         headers: { 'Content-Type': 'application/json' },
       }
-    ).catch((err) => {
-      return { error: true, msg: 'Server is down, please try again later!' };
-    });
+    );
 
-    if (response.error) {
-      return response;
+    if (!response.ok) {
+      throw new Error('Server is down, please try again later!');
     }
-    const content = await response.json();
 
-    return content;
+    return response.json();
   },
+
+  async getPaginatedPublicQuestions(page, pageSize = 20) {
+    
+    const response = await fetch(
+      `http://localhost:8000/api/v1/public/questions/${page}-${pageSize}`,
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Server is down, please try again later!');
+    }
+
+    return response.json();
+  },
+  
+  async getUsersWithMostAnswers() {
+    
+    const response = await fetch(
+      `http://localhost:8000/api/v1/public/top-answers`,
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Server is down, please try again later!');
+    }
+
+    return response.json();
+  },
+
 };

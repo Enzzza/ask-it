@@ -1,9 +1,14 @@
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
-import Avatar from '@material-ui/core/Avatar';
+
 import { makeStyles } from '@material-ui/core/styles';
 import { lightBlue, grey } from '@material-ui/core/colors';
 import { Link as RouterLink } from 'react-router-dom';
+import GetHumanizedTime from '../../utils/GetHumanizedTime';
+import { useQuery } from 'react-query';
+import { userController } from '../../api/user';
+import { UserAvatar } from '../avatar/UserAvatar';
+
 const useStyles = makeStyles({
   title: {
     lineHeight: 1.3,
@@ -29,29 +34,34 @@ const useStyles = makeStyles({
 });
 
 const truncate = (str, n) => {
-    return str.length > n ? str.substr(0, n - 1) + '...' : str;
+  return str.length > n ? str.substr(0, n - 1) + '...' : str;
 };
 
 export default function BaseCard(props) {
   const classes = useStyles();
+
+  const { data, isLoading, isError } = useQuery(
+    ['users', props.question.userID],
+    () => userController.getUserById(props.question.userID)
+  );
+
   return (
     <div>
       <Paper elevation={3} margin={1}>
         <Box display='flex' px={1} py='12px'>
-            {props.sideComponent}
+          {props.sideComponent}
           <Box flexGrow={1}>
             <Box display='flex' flexDirection='column'>
               <RouterLink className={classes.title}>
                 <Box component='span' marginBottom={1}>
-                  handlebar: TypeError: (depth0 ||
-                  container.hooks.helperMissing).call is not a function
+                  {props.question.title}
                 </Box>
               </RouterLink>
 
               <Box component='span' className={classes.subtitle} marginTop={2}>
-                {truncate(`Even though the question is already asked it dont provide any
-                solutions I am using handlebar as a templating engine for
-                node+express. router.get`,200)}
+                {!props.isAnswer
+                  ? truncate(props.question.body, 200)
+                  : props.question.body}
               </Box>
               <Box display='flex' justifyContent='flex-end' marginTop={2}>
                 <Box
@@ -65,16 +75,21 @@ export default function BaseCard(props) {
                     className={classes.timestampText}
                     marginBottom={1}
                   >
-                    asked 2 mins ago
+                    asked {GetHumanizedTime(props.question.createdAt)}
                   </Box>
-                  <Box display='flex' alignItems='center'>
-                    <Avatar>S</Avatar>
-                    <RouterLink className={classes.userText}>
-                      <Box component='span' marginLeft={1}>
-                        Enis Habul
-                      </Box>
-                    </RouterLink>
-                  </Box>
+                  {isLoading ? (
+                    'Loading...'
+                  ) : (
+                    <Box display='flex' alignItems='center'>
+                      <UserAvatar user={data.user} spacing={6} />
+                      <RouterLink className={classes.userText} to={`/users/profile/${props.question.userID}`}>
+                        <Box component='span' marginLeft={1}>
+                          {data.user.displayName}
+                        </Box>
+                      </RouterLink>
+                    </Box>
+                  )}
+                  {isError &&(<div></div>)}
                 </Box>
               </Box>
             </Box>

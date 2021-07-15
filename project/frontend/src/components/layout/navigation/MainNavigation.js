@@ -20,11 +20,52 @@ import { useHistory } from 'react-router-dom';
 
 import useCustomSnackbar from '../../utils/snackbar/useCustomSnackbar';
 
+import useScrollTrigger from '@material-ui/core/useScrollTrigger';
+import Zoom from '@material-ui/core/Zoom';
+import Fab from '@material-ui/core/Fab';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
   },
+  root:{
+    position: 'fixed',
+    bottom: theme.spacing(2),
+    right: theme.spacing(2),
+  }
 }));
+
+
+function ScrollTop(props) {
+  const { children } = props;
+  const classes = useStyles();
+
+  const trigger = useScrollTrigger({
+    disableHysteresis: true,
+    threshold: 100,
+  });
+
+  const handleClick = (event) => {
+    const anchor = (event.target.ownerDocument || document).querySelector(
+      '#back-to-top-anchor'
+    );
+
+    if (anchor) {
+      anchor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
+  return (
+    <Zoom in={trigger}>
+      <div onClick={handleClick} role='presentation' className={classes.root}>
+        {children}
+      </div>
+    </Zoom>
+  );
+}
+
+
 
 export default function PrimarySearchAppBar() {
   const auth = useAuth();
@@ -49,12 +90,18 @@ export default function PrimarySearchAppBar() {
     history.push('/account');
   };
 
+  const myQuestions = () => {
+    accountPopupState.close();
+    history.push(`/users/questions/${auth.user.id}`);
+  }
+
   return (
     <div className={classes.grow}>
-      <AppBar position='static'>
+      <AppBar position='fixed'>
         <Toolbar>
           <Typography variant='h6' noWrap>
             <Button onClick={() => history.push('/')}>Home</Button>
+            <Button onClick={() => history.push('/ask')}>Ask</Button>
           </Typography>
 
           <div className={classes.grow} />
@@ -67,6 +114,7 @@ export default function PrimarySearchAppBar() {
               </IconButton>
               <Menu {...bindMenu(accountPopupState)}>
                 <MenuItem onClick={myAccount}>My account</MenuItem>
+                <MenuItem onClick={myQuestions}>My questions</MenuItem>
                 <MenuItem onClick={signout}>Logout</MenuItem>
               </Menu>
             </div>
@@ -83,6 +131,12 @@ export default function PrimarySearchAppBar() {
           )}
         </Toolbar>
       </AppBar>
+      <Toolbar id="back-to-top-anchor" />
+      <ScrollTop>
+        <Fab color='primary' size='small' aria-label='scroll back to top'>
+          <KeyboardArrowUpIcon />
+        </Fab>
+      </ScrollTop>
     </div>
   );
 }

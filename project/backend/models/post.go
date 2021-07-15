@@ -1,8 +1,6 @@
 package models
 
 import (
-	_"encoding/json"
-	_"fmt"
 	"strconv"
 	"time"
 
@@ -15,7 +13,7 @@ type Post struct {
 	CreatedAt 		time.Time 	  		`json:"createdAt"`
 	UpdatedAt 		time.Time	      	`json:"updatedAt"`
 	DeletedAt 		gorm.DeletedAt  	`json:"deletedAt" gorm:"index"`
-	Title     		string         		`json:"title" validate:"required,lte=155"`
+	Title     		string         		`json:"title" validate:"lte=155"`
 	Body   	  		string         		`json:"body" validate:"required,lte=30000"`
 	AnswerCount 	uint				`json:"answerCount" gorm:"default:0"`
 	ViewCount 		uint				`json:"viewCount" gorm:"default:0"`

@@ -1,15 +1,23 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import BaseCard from './BaseCard';
-import StatsContainer from './StatsContainer';
-export default function PostContainer() {
+
+const addMoreProps = (component, item) => {
+  return React.cloneElement(component, {
+    votes: item.score,
+    answers: item.answerCount,
+    views: item.viewCount,
+  });
+};
+
+export default function PostContainer(props) {
   return (
     <div>
       <Grid container spacing={3}>
-        {[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20].map( item => (
-            <Grid item xs={12}>
-                <BaseCard sideComponent={<StatsContainer/>}/>
-            </Grid>
+        {props.questions.map((question) => (
+          <Grid item xs={12}>
+            <BaseCard sideComponent={addMoreProps(props.sideComponent, question)} question={question} isAnswer={props.isAnswer}/>
+          </Grid>
         ))}
       </Grid>
     </div>

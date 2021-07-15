@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import AccountProfile from '../components/account/AccountProfile';
 import { useParams } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { publicController } from '../api/public';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 import Alert from '@material-ui/lab/Alert';
+import { useQuery } from 'react-query';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,61 +19,42 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Profile() {
-  let { id } = useParams();
-  const [user, setUser] = useState(null);
-  const [questions, setQuestions] = useState(0);
-  const [loading, setLoader] = useState(false);
-  const [error, setError] = useState(false);
-  const [errors, setErrors] = useState([]);
   const classes = useStyles();
-  useEffect(() => {
-    (async () => {
-      setLoader(true);
-      let {
-        msg: userMsg,
-        error: userError,
-        user: fetchedUser,
-      } = await userController.getUserById(id);
-      let {
-        msg: questionsMsg,
-        error: questionsError,
-        count,
-      } = await publicController.GetPublicQuestionsById(id);
-      if (userError || questionsError) {
-        setError(true);
-        if (userError) {
-          setErrors([...errors, userMsg]);
-        } else if (questionsError) {
-          setErrors([...errors, questionsMsg]);
-        }
-      } else {
-        setLoader(false);
+  let { id } = useParams();
+  const { isError: isUserError, data: user } = useQuery(['users', id], () =>
+    userController.getUserById(id)
+  );
 
-        setUser(fetchedUser);
-        setQuestions(count);
-      }
-    })();
+  const {
+    isLoading,
+    isError,
+    data: questions,
+  } = useQuery(['questions', { userId: id }], () =>
+    publicController.getPublicQuestionsById(id)
+  );
 
-    return () => {};
-  }, [id]);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-  if (!error) {
+  if (isError || isUserError) {
     return (
-      <>
-        <Container style={{ marginTop: 50 }}>
-          <AccountProfile user={user} questions={questions} loading={loading} />
-        </Container>
-      </>
-    );
-  } else {
-    return (
-      <Box style={{marginTop:40, marginLeft:30, marginRight: 50}}>
+      <Box style={{ marginTop: 40, marginLeft: 30, marginRight: 50 }}>
         <div className={classes.root}>
-          {errors.map((err) => (
-            <Alert severity='error'>{err}</Alert>
-          ))}
+          <Alert severity='error'>Server is down, please try again later!</Alert>
         </div>
       </Box>
     );
   }
+
+
+  
+    return (
+      <>
+        <Container style={{ marginTop: 50 }}>
+          <AccountProfile user={user.user} questions={questions.count}/>
+        </Container>
+      </>
+    );
+  
 }

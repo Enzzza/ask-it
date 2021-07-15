@@ -8,8 +8,10 @@ import Account from '../pages/Account';
 import Profile from '../pages/Profile';
 import NotFound from '../pages/NotFound';
 import PrivateRoute from './PrivateRoute';
-import Posts from '../pages/Posts';
+import Answers from '../pages/Answers';
 import {useAuth} from "../contexts/AuthContext";
+import UserQuestions from '../pages/UserQuestions';
+import NewQuestion from '../pages/NewQuestion';
 export default function Router() {
   const auth = useAuth();
   
@@ -31,9 +33,15 @@ export default function Router() {
           <Route path='/users/profile/:id'>
             <Profile />
           </Route>
-          <Route path='/posts/:id/:answerId?'>
-            <Posts />
+          <Route path='/users/questions/:userId'>
+            <UserQuestions />
           </Route>
+          <Route path='/answers/:questionId/:answerId?'>
+            <Answers />
+          </Route>
+          <PrivateRoute path='/ask'>
+            <NewQuestion/>
+          </PrivateRoute>
           <PrivateRoute path='/account'>
             <Account />
           </PrivateRoute>

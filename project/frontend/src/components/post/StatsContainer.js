@@ -12,7 +12,7 @@ const useStyles = makeStyles({
     color: grey[200],
   },
 });
-export default function StatsContainer() {
+export default function StatsContainer(props) {
   const classes = useStyles();
   return (
     <Box display='flex' flexDirection='column' marginLeft={1} marginRight={2}>
@@ -23,7 +23,7 @@ export default function StatsContainer() {
         marginBottom='8px'
       >
         <Box component='span' className={classes.statsCount}>
-          0
+          {props.votes}
         </Box>
         <Box component='span' className={classes.statsText}>
           votes
@@ -38,7 +38,7 @@ export default function StatsContainer() {
         marginBottom='8px'
       >
         <Box component='span' className={classes.statsCount}>
-          0
+          {props.answers}
         </Box>
         <Box component='span' className={classes.statsText}>
           answers
@@ -52,7 +52,7 @@ export default function StatsContainer() {
         paddingTop='4px'
       >
         <Box component='span' className={classes.statsText}>
-          3 views
+          {props.views} views
         </Box>
       </Box>
     </Box>

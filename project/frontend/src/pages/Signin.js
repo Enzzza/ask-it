@@ -18,8 +18,6 @@ import SignInForm from '../components/forms/SignInForm';
 import useCustomSnackbar from '../components/utils/snackbar/useCustomSnackbar';
 import { SpinnerContext } from '../contexts/SpinnerContext';
 
-
-
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -55,7 +53,6 @@ export default function SignIn() {
   const snackbar = useCustomSnackbar();
 
   const auth = useAuth();
-  
 
   const formSubmitHandler = async ({ email, password }) => {
     setLoaderState(true);
@@ -63,10 +60,6 @@ export default function SignIn() {
     if (!error) {
       snackbar.showSuccess(`Welcome ${user.displayName}`, 'Close', () => {});
       setRedirect(true);
-    
-  
-      
-        
     } else {
       snackbar.showError(msg, 'Close', () => {});
     }

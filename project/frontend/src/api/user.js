@@ -1,21 +1,18 @@
 export const userController = {
   async getUserById(id) {
+    
     const response = await fetch(
       `http://localhost:8000/api/v1/user/profile/${id}`,
       {
         headers: { 'Content-Type': 'application/json' },
       }
-    ).catch((err) => {
-      return { error: true, msg: 'Server is down, please try again later!' };
-    });
-
-    if (response.error) {
-      return response;
+    );
+  
+    if(!response.ok){
+      throw new Error("Server is down, please try again later!");
     }
-
-    const content = await response.json();
-
-    return content;
+    
+    return response.json();
   },
 
   async getUserQuestions() {
@@ -25,18 +22,28 @@ export const userController = {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
       }
-    ).catch((err) => {
-      return { error: true, msg: 'Server is down, please try again later!' };
-    });
+    );
     
 
-    if (response.error) {
-      return response;
+    if(!response.ok){
+      throw new Error("Server is down, please try again later!");
     }
 
-    const content = await response.json();
+    return response.json();
+  },
+  async getPaginatedUserQuestions(id,page, pageSize = 20) {
+    const response = await fetch(
+      `http://localhost:8000/api/v1/user/${id}/questions/${page}-${pageSize}`,
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
 
-    return content;
+    if (!response.ok) {
+      throw new Error('Server is down, please try again later!');
+    }
+
+    return response.json();
   },
   
 };

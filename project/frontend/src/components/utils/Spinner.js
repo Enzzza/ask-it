@@ -22,8 +22,9 @@ export const Spinner = (props) => {
 
   return (
     <div className={classes.spinner}>
-      {' '}
       <RotateSpinner  size={45} color="#005A34" loading={isLoading} />
     </div>
   );
 };
+
+
