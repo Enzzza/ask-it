@@ -65,7 +65,7 @@ export default function Notification() {
                 key={item.newPost.id.toString()}
                 button
                 component={RouterLink}
-                to={`/posts/${item.orginalPost.id}/${item.newPost.id}`}
+                to={`/answers/${item.orginalPost.id}/${item.newPost.id}`}
                 onClick={() => {
                   notificationPopupState.close();
                   dispatch({

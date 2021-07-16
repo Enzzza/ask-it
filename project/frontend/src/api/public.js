@@ -46,5 +46,21 @@ export const publicController = {
 
     return response.json();
   },
+  
+
+  async getAnswersForQuestion(questionID){
+    const response = await fetch(
+      `http://localhost:8000/api/v1/public/answers/${questionID}`,
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Server is down, please try again later!');
+    }
+
+    return response.json();
+  }
 
 };

@@ -11,8 +11,8 @@ export default function Answers() {
   //   smooth: 'easeInOutQuart',
   //   activeClass: 'active',
   // });
-  let { id, answerId } = useParams();
+  let { questionId, answerId } = useParams();
   return (
-    <AnswersContainer/>
+    <AnswersContainer questionId={questionId} answerId={answerId}/>
   );
 }

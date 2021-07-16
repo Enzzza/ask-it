@@ -1,7 +1,6 @@
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
-import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import { Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,10 +9,13 @@ import { Link as RouterLink } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { publicController } from '../../api/public';
 import { UserAvatar } from '../avatar/UserAvatar';
+import Icon from '@material-ui/core/Icon';
+
 
 const useStyles = makeStyles({
   mainTitle: {
     color: grey[200],
+    marginBottom: 20,
   },
   title: {
     lineHeight: 1.3,
@@ -76,17 +78,24 @@ export default function TopUserList() {
                   justifyContent='center'
                   alignItems='center'
                 >
-                  <RouterLink className={classes.title} to={`/users/profile/${item.id}`}>
+                  <RouterLink
+                    className={classes.title}
+                    to={`/users/profile/${item.id}`}
+                  >
                     <Typography gutterBottom>@{item.displayName}</Typography>
                   </RouterLink>
                   <Box>
                     <UserAvatar user={item} spacing={6} />
                   </Box>
                 </Box>
+                <Icon>star</Icon>
+                <Icon>star</Icon>
+                <Icon>star</Icon>
+                <Icon>star</Icon>
                 <Box className={classes.box}>{item.answerCount}</Box>
               </Box>
             </Box>
-            {index!==data.answers.length && <Divider />}
+            {index + 1 !== data.answers.length && <Divider />}
           </>
         ))}
       </Paper>

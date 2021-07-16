@@ -106,7 +106,7 @@ func GetPosts(c *fiber.Ctx) error {
 
 }
 
-// GetPost func will return one post
+// GetPost func will return one post(question or answer)
 // @Description Return one post
 // @Summary Return one post for given id
 // @Tags Post
@@ -133,6 +133,32 @@ func GetPost(c *fiber.Ctx) error {
 	})
 }
 
+// GetQuestionPost func will return one question post
+// @Description Return one question post
+// @Summary Return post if its of type question
+// @Tags Post
+// @Accept json
+// @Produce json
+// @Param id path integer  true "Post ID"
+// @Success 200 {object} models.Post
+// @Router /v1/posts/question/:id [get]
+func GetQuestionPost(c *fiber.Ctx) error {
+	id := c.Params("id")
+	post:= &models.Post{}
+	err := database.DB.Where("id = ? AND parent_id= ?",id,0).First(post).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"msg":   "Couldn't find that post",
+			"error": true,
+		})
+	}
+	
+	return c.JSON(fiber.Map{
+		"msg": "Post found",
+		"post": post,
+		"error": false,
+	})
+}
 
 // DeletePost func for deleting post by given ID.
 // @Description Delete post by given ID.

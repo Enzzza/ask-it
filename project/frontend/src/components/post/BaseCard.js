@@ -27,7 +27,7 @@ const useStyles = makeStyles({
     color: grey[300],
   },
   userText: {
-    fontSize: 12,
+    fontSize: 15,
     color: lightBlue[500],
     textDecoration: 'none',
   },
@@ -52,11 +52,17 @@ export default function BaseCard(props) {
           {props.sideComponent}
           <Box flexGrow={1}>
             <Box display='flex' flexDirection='column'>
-              <RouterLink className={classes.title}>
-                <Box component='span' marginBottom={1}>
+              {!props.isAnswer ? (
+                <RouterLink className={classes.title} to={`/answers/${props.question.id}`}>
+                  <Box component='span' marginBottom={1}>
+                    {props.question.title}
+                  </Box>
+                </RouterLink>
+              ) : (
+                <Box component='span' marginBottom={1} className={classes.title}>
                   {props.question.title}
                 </Box>
-              </RouterLink>
+              )}
 
               <Box component='span' className={classes.subtitle} marginTop={2}>
                 {!props.isAnswer
@@ -82,14 +88,17 @@ export default function BaseCard(props) {
                   ) : (
                     <Box display='flex' alignItems='center'>
                       <UserAvatar user={data.user} spacing={6} />
-                      <RouterLink className={classes.userText} to={`/users/profile/${props.question.userID}`}>
+                      <RouterLink
+                        className={classes.userText}
+                        to={`/users/profile/${props.question.userID}`}
+                      >
                         <Box component='span' marginLeft={1}>
-                          {data.user.displayName}
+                          @{data.user.displayName}
                         </Box>
                       </RouterLink>
                     </Box>
                   )}
-                  {isError &&(<div></div>)}
+                  {isError && <div></div>}
                 </Box>
               </Box>
             </Box>

@@ -25,6 +25,7 @@ func PublicRoutes(a *fiber.App) {
 
 	route.Get("/posts",controllers.GetPosts)
 	route.Get("/posts/:id",controllers.GetPost)
+	route.Get("/posts/question/:id",controllers.GetQuestionPost)
 
 	// PUBLIC ROUTES
 

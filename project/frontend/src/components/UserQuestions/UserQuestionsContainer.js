@@ -7,6 +7,7 @@ import StatsContainer from '../post/StatsContainer';
 import Pagination from '@material-ui/lab/Pagination';
 import { useQuery, useQueryClient } from 'react-query';
 import { userController } from '../../api/user';
+import { grey } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -16,6 +17,14 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 50,
     marginBottom: 50,
   },
+  empty: {
+    display:'flex',
+    alignItems: 'center',
+    justifyContent:'center',
+    width:'100%',
+    fontSize: 20,
+    color: grey[300],
+  }
 }));
 
 export default function UserQuestionsContainer(props) {
@@ -51,27 +60,31 @@ export default function UserQuestionsContainer(props) {
 
   return (
     <div className={classes.root}>
-      <Box>
-        <Grid container justify='center'>
-          <Grid item xs={6}>
-            <PostContainer
-              sideComponent={<StatsContainer />}
-              questions={data.questions}
-              isAnswer={false}
-            />
+      {data.total > 0 ? (
+        <Box>
+          <Grid container justify='center'>
+            <Grid item xs={6}>
+              <PostContainer
+                sideComponent={<StatsContainer />}
+                questions={data.questions}
+                isAnswer={false}
+              />
+            </Grid>
           </Grid>
-        </Grid>
-        <Grid container justify='center'>
-          <Grid container justify='center' className={classes.pagination}>
-            <Pagination
-              count={Math.ceil(data.total / 20)}
-              color='primary'
-              page={page}
-              onChange={handleChange}
-            />
+          <Grid container justify='center'>
+            <Grid container justify='center' className={classes.pagination}>
+              <Pagination
+                count={Math.ceil(data.total / 20)}
+                color='primary'
+                page={page}
+                onChange={handleChange}
+              />
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
+        </Box>
+      ) : (
+        <Box className={classes.empty}>Question list empty!</Box>
+      )}
     </div>
   );
 }

@@ -35,7 +35,7 @@ export default function VotingContainer(props) {
           <KeyboardArrowUp/>
         </Box>
         <Box component='span' className={classes.statsText} marginTop="8px" marginBottom="8px">
-          0
+          {props.votes}
         </Box>
         <Box component='span'>
           <KeyboardArrowDown />

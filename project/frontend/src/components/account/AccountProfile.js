@@ -35,7 +35,7 @@ const AccountProfile = (props,context) => {
         <Box display='flex'>
           <UserAvatar user={user} spacing={6} />
           <div style={{ marginLeft: 20 }}>
-            <Typography color='textPrimary' gutterBottom variant='h4'>
+            <Typography color='textPrimary' gutterBottom variant='h5'>
               @{displayName}
             </Typography>
           </div>
@@ -43,7 +43,7 @@ const AccountProfile = (props,context) => {
         <Typography
           color='textSecondary'
           variant='body1'
-          style={{ marginBottom: 20 }}
+          style={{ marginBottom: 20, marginTop: 10 }}
         >
           First seen {`${timePassed}`}
         </Typography>
