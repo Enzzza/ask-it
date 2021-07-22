@@ -9,10 +9,12 @@ import reportWebVitals from './reportWebVitals';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Spinner } from './components/utils/Spinner';
+import IsFetchingSpinner from './components/utils/IsFetchingSpinner';
 import SpinnerContextProvider from './contexts/SpinnerContext';
 import { SnackbarProvider } from 'material-ui-snackbar-provider';
 import CustomSnackbar from './components/utils/snackbar/CustomSnackbar';
 import CssBaseline from "@material-ui/core/CssBaseline";
+
 
 
 
@@ -40,6 +42,7 @@ ReactDOM.render(
               <App />
               <ReactQueryDevtools />
               <Spinner />
+              <IsFetchingSpinner />
             </>
           </SnackbarProvider>
         </SpinnerContextProvider>

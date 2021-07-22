@@ -1,49 +1,53 @@
-import { makeStyles } from '@material-ui/core';
 import { Box, Container, Grid } from '@material-ui/core';
 import AccountProfile from '../components/account/AccountProfile';
 import AccountProfileDetails from '../components/account/AccountProfileDetails';
 import AccountPassword from '../components/account/AccountPassword';
 import { useAuth } from '../contexts/AuthContext';
 import { userController } from '../api/user';
-import Alert from '@material-ui/lab/Alert';
 import { useQuery } from 'react-query';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-    '& > * + *': {
-      marginTop: theme.spacing(2),
-    },
-  },
-}));
+import Error from '../components/utils/Error';
+import LoadingSpinner from '../components/utils/LoadingSpinner';
 
 const Account = () => {
   const auth = useAuth();
-  const classes = useStyles();
-  const { isError:isUserError,data: user } = useQuery(['users', auth.user.id], () =>
+  const {
+    data: user,
+    isError: isUserError,
+    error: userError,
+    isLoading: isUserLoading,
+  } = useQuery(['users', auth.user.id], () =>
     userController.getUserById(auth.user.id)
   );
+
+  const userId = user?.id;
 
   const {
     isLoading,
     isError,
+    error,
     data: questions,
-  } = useQuery(['questions', { userId: auth.user.id }], () =>
-    userController.getUserQuestions(auth.user.id),
+  } = useQuery(
+    ['questions', { userId: auth.user.id }],
+    () => userController.getUserQuestions(auth.user.id),
+    {
+      enabled: !!userId,
+    }
   );
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (isUserLoading) {
+    return <LoadingSpinner isLoading={isUserLoading} />;
   }
-  
-  if (isError || isUserError) {
-    return (
-      <Box style={{ marginTop: 40, marginLeft: 30, marginRight: 50 }}>
-        <div className={classes.root}>
-          <Alert severity='error'>Server is down, please try again later!</Alert>
-        </div>
-      </Box>
-    );
+
+  if (isUserError) {
+    return <Error message={userError.message} />;
+  }
+
+  if (isLoading) {
+    return <LoadingSpinner isLoading={isLoading} />;
+  }
+
+  if (isError) {
+    return <Error message={error.message} />;
   }
 
   return (
@@ -52,7 +56,7 @@ const Account = () => {
         <Container maxWidth='lg'>
           <Grid container spacing={3}>
             <Grid item lg={4} md={6} xs={12}>
-              <AccountProfile user={user.user} questions={questions.count}/>
+              <AccountProfile user={user} questions={questions.length} />
             </Grid>
             <Grid item lg={8} md={6} xs={12}>
               <AccountProfileDetails />

@@ -9,7 +9,6 @@ const WebsocketProvider = createSagaProvider({
   initialValues: initialValues,
 });
 
-
 function App() {
   return (
     <>

@@ -9,6 +9,8 @@ import { Divider } from '@material-ui/core';
 import { useQuery } from 'react-query';
 import { scoreController } from '../../api/score';
 import Icon from '@material-ui/core/Icon';
+import Error from '../utils/Error';
+import { ClassicSpinner } from "react-spinners-kit";
 
 const useStyles = makeStyles({
   mainTitle: {
@@ -42,16 +44,17 @@ const truncate = (str, n) => {
 };
 export default function HotQuestions() {
   const classes = useStyles();
-  const { isLoading, isError, data, error } = useQuery(['top-questions'], () =>
-    scoreController.getTopScoreQuestions()
+  const { isLoading, isError, data, error } = useQuery(
+    ['questions', 'top'],
+    () => scoreController.getTopScoreQuestions()
   );
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <ClassicSpinner loading={isLoading}/>
   }
 
   if (isError) {
-    return <span>Error: {error.message}</span>;
+    return <Error message={error.message} />;
   }
 
   return (
@@ -65,33 +68,38 @@ export default function HotQuestions() {
           </Box>
         </Typography>
       </Box>
-      <Paper elevation={3}>
-        {data.score.map((item, index) => (
-          <>
-            <Box
-              display='flex'
-              padding={1}
-              alignItems='center'
-              justifyContent='space-between'
-            >
-              <Box display='flex' alignItems='baseline'>
-                <Box className={classes.index}>#{index + 1}</Box>
-                <RouterLink
-                  className={classes.title}
-                  to={`/answers/${item.id}`}
-                >
-                  <Typography gutterBottom>
-                    {truncate(item.title, 40)}
-                  </Typography>
-                </RouterLink>
-              </Box>
 
-              <Box className={classes.box}>{item.score}</Box>
-            </Box>
-            {index + 1 !== data.score.length && <Divider />}
-          </>
-        ))}
-      </Paper>
+      {data.length ? (
+        <Paper elevation={3}>
+          {data.map((item, index) => (
+            <React.Fragment key={item.id}>
+              <Box
+                display='flex'
+                padding={1}
+                alignItems='center'
+                justifyContent='space-between'
+              >
+                <Box display='flex' alignItems='baseline'>
+                  <Box className={classes.index}>#{index + 1}</Box>
+                  <RouterLink
+                    className={classes.title}
+                    to={`/answers/${item.id}`}
+                  >
+                    <Typography gutterBottom>
+                      {truncate(item.title, 40)}
+                    </Typography>
+                  </RouterLink>
+                </Box>
+
+                <Box className={classes.box}>{item.score}</Box>
+              </Box>
+              {index + 1 !== data.length && <Divider />}
+            </React.Fragment>
+          ))}
+        </Paper>
+      ) : (
+        <Box>There is no hot questions yet!</Box>
+      )}
     </div>
   );
 }

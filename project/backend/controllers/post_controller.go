@@ -74,6 +74,7 @@ func CreatePost(c *fiber.Ctx) error{
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"msg":   fmt.Sprintf("Post created with id: %v",post.Id),
 		"error": false,
+		"post": post,
 	})
 
 }
@@ -167,7 +168,7 @@ func GetQuestionPost(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param id path integer true "Post ID"
-// @Success 200 {string} status "ok"
+// @Success 200 {object} models.Post
 // @Security ApiKeyAuth
 // @Router /v1/posts/:id [delete]
 func DeletePost(c *fiber.Ctx) error {
@@ -184,7 +185,7 @@ func DeletePost(c *fiber.Ctx) error {
 	
 	post := &models.Post{}
 	database.DB.First(&post, postId)
-	if post.Title == "" {
+	if post.Id == 0 {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"msg": fmt.Sprintf("Post not found with id of %v", postId),
 			"error": true,
@@ -208,7 +209,7 @@ func DeletePost(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{
 		"msg": "Post deleted",
-		"posts": post,
+		"post": post,
 		"error": false,
 	})
 
@@ -223,7 +224,7 @@ func DeletePost(c *fiber.Ctx) error {
 // @Param id path integer true "Post ID"
 // @Param title body string false "Title"
 // @Param body body string true "Body"
-// @Success 200 {string} status "ok"
+// @Success 200 {object} models.Post
 // @Security ApiKeyAuth
 // @Router /v1/posts/:id [put]
 func UpdatePost(c *fiber.Ctx) error{
@@ -239,7 +240,7 @@ func UpdatePost(c *fiber.Ctx) error{
 	
 	post:= &models.Post{}
 	database.DB.First(&post, postId)
-	if post.Title == "" {
+	if post.Id == 0 {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"msg": fmt.Sprintf("Post not found with id of %v", postId),
 			"error": true,
@@ -290,7 +291,7 @@ func UpdatePost(c *fiber.Ctx) error{
 
 	return c.JSON(fiber.Map{
 		"msg": "Post updated",
-		"posts": post,
+		"post": post,
 		"error": false,
 	})
 		

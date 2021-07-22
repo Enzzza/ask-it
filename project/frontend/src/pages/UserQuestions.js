@@ -8,7 +8,7 @@ export default function UserQuestions() {
     let { userId } = useParams();
     return (
         <div>
-            <UserQuestionsContainer id={userId}/>
+            <UserQuestionsContainer userId={userId}/>
         </div>
     )
 }

@@ -134,7 +134,7 @@ func GetUserProfile(c *fiber.Ctx) error {
 	var user models.User
 
 	if result := database.DB.Where("id = ?", id).First(&user); result.Error != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"msg": "Couldn't find user!",
 			"error": true,
 		})
@@ -162,7 +162,7 @@ func GetUserVotes(c *fiber.Ctx) error {
 	id := fmt.Sprintf("%v", c.Locals("id"))
 
 	if result := database.DB.Where("id = ?", id).First(&user); result.Error != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"msg": "Couldn't find user!",
 			"error": true,
 		})

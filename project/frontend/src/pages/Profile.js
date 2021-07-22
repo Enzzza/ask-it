@@ -1,60 +1,58 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
 import AccountProfile from '../components/account/AccountProfile';
 import { useParams } from 'react-router-dom';
 import { userController } from '../api/user';
 import { publicController } from '../api/public';
 import Container from '@material-ui/core/Container';
-import Box from '@material-ui/core/Box';
-import Alert from '@material-ui/lab/Alert';
 import { useQuery } from 'react-query';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-    '& > * + *': {
-      marginTop: theme.spacing(2),
-    },
-  },
-}));
+import Error from '../components/utils/Error';
+import LoadingSpinner from '../components/utils/LoadingSpinner';
 
 export default function Profile() {
-  const classes = useStyles();
   let { id } = useParams();
-  const { isError: isUserError, data: user } = useQuery(['users', id], () =>
-    userController.getUserById(id)
-  );
+  const {
+    data: user,
+    isError: isUserError,
+    error: userError,
+    isLoading: isUserLoading,
+  } = useQuery(['users', id], () => userController.getUserById(id));
+
+  const userId = user?.id;
 
   const {
     isLoading,
     isError,
+    error,
     data: questions,
-  } = useQuery(['questions', { userId: id }], () =>
-    publicController.getPublicQuestionsById(id)
+  } = useQuery(
+    ['questions', { userId: id }],
+    () => publicController.getPublicQuestionsById(id),
+    {
+      enabled: !!userId,
+    }
   );
 
+  if (isUserLoading) {
+    return <LoadingSpinner isLoading={isUserLoading} />;
+  }
+
+  if (isUserError) {
+    return <Error message={userError.message} />;
+  }
+
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner isLoading={isLoading} />;
   }
 
-  if (isError || isUserError) {
-    return (
-      <Box style={{ marginTop: 40, marginLeft: 30, marginRight: 50 }}>
-        <div className={classes.root}>
-          <Alert severity='error'>Server is down, please try again later!</Alert>
-        </div>
-      </Box>
-    );
+  if (isError) {
+    return <Error message={error.message} />;
   }
 
-
-  
-    return (
-      <>
-        <Container style={{ marginTop: 50 }}>
-          <AccountProfile user={user.user} questions={questions.count}/>
-        </Container>
-      </>
-    );
-  
+  return (
+    <>
+      <Container style={{ marginTop: 50 }}>
+        <AccountProfile user={user} questions={questions.length} />
+      </Container>
+    </>
+  );
 }

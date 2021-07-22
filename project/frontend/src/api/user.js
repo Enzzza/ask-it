@@ -1,18 +1,21 @@
 export const userController = {
   async getUserById(id) {
-    
     const response = await fetch(
       `http://localhost:8000/api/v1/user/profile/${id}`,
       {
         headers: { 'Content-Type': 'application/json' },
       }
     );
-  
-    if(!response.ok){
-      throw new Error("Server is down, please try again later!");
+
+    if (!response.ok) {
+      console.log(response);
+      throw new Error(`User: ${response.statusText}`);
     }
-    
-    return response.json();
+
+    const content = await response.json();
+    const { user } = content;
+
+    return user;
   },
 
   async getUserQuestions() {
@@ -23,15 +26,17 @@ export const userController = {
         credentials: 'include',
       }
     );
-    
 
-    if(!response.ok){
-      throw new Error("Server is down, please try again later!");
+    if (!response.ok) {
+      throw new Error(`User: ${response.statusText}`);
     }
 
-    return response.json();
+    const content = await response.json();
+    const { questions } = content;
+
+    return questions;
   },
-  async getPaginatedUserQuestions(id,page, pageSize = 20) {
+  async getPaginatedUserQuestions(id, page, pageSize = 20) {
     const response = await fetch(
       `http://localhost:8000/api/v1/user/${id}/questions/${page}-${pageSize}`,
       {
@@ -40,10 +45,12 @@ export const userController = {
     );
 
     if (!response.ok) {
-      throw new Error('Server is down, please try again later!');
+      throw new Error(`User: ${response.statusText}`);
     }
 
-    return response.json();
+    const content = await response.json();
+    const { error, msg, ...obj } = content;
+
+    return obj;
   },
-  
 };

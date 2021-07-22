@@ -26,7 +26,7 @@ const AccountProfile = (props,context) => {
   let displayName = user.displayName;
   let timePassed = GetHumanizedTime(user.createdAt);
   let email = user.email;
-  // get it from db
+
   let questions = props.questions ? props.questions : 0;
   let answers = user.answerCount;
   return (

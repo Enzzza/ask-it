@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import VotingContainer from '../post/VotingContainer';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -13,9 +14,15 @@ import AnswerForm from '../forms/AnswerForm';
 
 import useCustomSnackbar from '../utils/snackbar/useCustomSnackbar';
 import { SpinnerContext } from '../../contexts/SpinnerContext';
-import { useQuery } from 'react-query';
+import Error from '../utils/Error';
+import LoadingSpinner from '../utils/LoadingSpinner';
+
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { postController } from '../../api/post';
 import { publicController } from '../../api/public';
+
+import { useAuth } from '../../contexts/AuthContext';
+import { useHistory, useLocation } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,39 +33,77 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function AnswersContainer(props) {
+  const auth = useAuth();
+  const history = useHistory();
+  const location = useLocation();
+  const queryClient = useQueryClient();
   const classes = useStyles();
   const schema = yup.object().shape({
-    answer: yup.string().required('Answer is required'),
+    answer: yup
+      .string()
+      .min(30, 'Answer must be at least 30 characters.')
+      .max(30000, 'Answer cannot be longer than 30000 characters.')
+      .required('Answer is required.'),
   });
   const methods = useForm({ resolver: yupResolver(schema) });
   const { isLoading, setLoaderState } = useContext(SpinnerContext);
   const snackbar = useCustomSnackbar();
 
+  const signin = () => {
+    const to = {
+      pathname: '/sign-in',
+      state: { from: location.pathname },
+    };
+
+    history.push(to);
+  };
+
+  const mutation = useMutation((data) => postController.createPost(data), {
+    onMutate: () => {
+      setLoaderState(true);
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries('questions');
+      queryClient.invalidateQueries('users');
+      snackbar.showSuccess(`Post added!`, 'Close', () => {});
+    },
+
+    onError: (error) => {
+      snackbar.showError(error.message, 'Close', () => {});
+    },
+    onSettled: () => {
+      setLoaderState(false);
+    },
+  });
+
   const formSubmitHandler = (data) => {
-    //setLoaderState(true);
-    //snackbar.showSuccess(`Welcome ${user.displayName}`, 'Close', () => {});
-    //setLoaderState(false);
-    console.log('form submited', data);
-    methods.reset({ answer: '' });
+    if (auth.user) {
+      mutation.mutate({
+        parentId: parseInt(props.questionId),
+        body: data.answer,
+      });
+      methods.reset({ answer: '' });
+    }
   };
 
   const {
     isLoading: isQuestionLoading,
-    isError,
+    isError: isQuestionError,
     data,
-  } = useQuery(['questions', { id: props.questionId }], () =>
+    error: questionError,
+  } = useQuery(['questions', { questionId: props.questionId }], () =>
     postController.getQuestionPost(props.questionId)
   );
 
-  const questionId = data?.post.id;
+  const questionId = data?.id;
 
   const {
-    isIdle,
     isLoading: isAnswersLoading,
     isError: isAnswersError,
     data: questions,
   } = useQuery(
-    ['answers', { id: props.questionId }],
+    ['questions', 'answers', { questionId: props.questionId }],
     () => publicController.getAnswersForQuestion(props.questionId),
     {
       enabled: !!questionId,
@@ -66,27 +111,21 @@ export default function AnswersContainer(props) {
   );
 
   if (isQuestionLoading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner isLoading={isQuestionLoading} />;
   }
 
-  if (isError) {
-    return <div>Error loading question</div>;
-  }
-
-  if (isIdle) {
-    return <div>Loading...</div>;
+  if (isQuestionError) {
+    return <Error message={questionError.message} />;
   }
 
   if (isAnswersLoading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner isLoading={isAnswersLoading} />;
   }
 
   if (isAnswersError) {
-    return <div>Error loading answers</div>;
+    return <Error message={isAnswersError.message} />;
   }
 
-  // Get post by props.questionID than get answers for that question (use GetPost from Postcontroller and GetAnswersForQuestion from public controller)
-  // pass questions to post Container add question card to top with costum styling
   return (
     <div className={classes.root}>
       <Grid container>
@@ -94,18 +133,43 @@ export default function AnswersContainer(props) {
           <PostContainer
             sideComponent={<VotingContainer />}
             isAnswer={true}
-            questions={[data.post, ...questions.answers]}
+            questions={[data, ...questions]}
           />
         </Grid>
         <Grid container>
           <Box marginTop={10} width={'100%'}>
             <FormProvider {...methods}>
               <form onSubmit={methods.handleSubmit(formSubmitHandler)}>
-                <AnswerForm />
+                <AnswerForm disabled={!auth.user} />
                 <Box marginTop={5} marginBottom={5}>
-                  <Button variant='contained' color='primary' type='submit'>
-                    Post Your Answer
-                  </Button>
+                  <Box display='flex'>
+                    <Box>
+                      <Button
+                        variant='contained'
+                        color='primary'
+                        type='submit'
+                        disabled={isLoading || !auth.user}
+                      >
+                        Post Your Answer
+                      </Button>
+                    </Box>
+                    {!auth.user && (
+                      <Box marginLeft={2}>
+                        <Tooltip
+                          title={<h3>You need to sign in to add answer!</h3>}
+                          arrow
+                        >
+                          <Button
+                            variant='contained'
+                            color='primary'
+                            onClick={signin}
+                          >
+                            Login
+                          </Button>
+                        </Tooltip>
+                      </Box>
+                    )}
+                  </Box>
                 </Box>
               </form>
             </FormProvider>

@@ -6,7 +6,8 @@ dayjs.extend(relativeTime);
 
 const GetHumanizedTime = (createdAt) => {
   let now = dayjs();
-  let memberSince = dayjs(createdAt).format('YYYY/MM/DD');
+  let memberSince = dayjs(createdAt).format();
+
   return dayjs(memberSince).from(now);
 };
 

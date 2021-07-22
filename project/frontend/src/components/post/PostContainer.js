@@ -2,7 +2,7 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import BaseCard from './BaseCard';
 import AnswerDivider from '../answers/AnswerDivider';
-
+import ActionButtons from './ActionButtons';
 const addMoreProps = (component, item) => {
   return React.cloneElement(component, {
     id: item.id,
@@ -14,21 +14,28 @@ const addMoreProps = (component, item) => {
 
 export default function PostContainer(props) {
   return (
-    <div>
+    <>
       <Grid container spacing={3}>
         {props.questions.map((question, index) => (
-          <>
-            <Grid item xs={12} key={question.id}>
+          <React.Fragment key={question.id}>
+            <Grid item xs={12}>
               <BaseCard
                 sideComponent={addMoreProps(props.sideComponent, question)}
                 question={question}
                 isAnswer={props.isAnswer}
+                actionComponent={
+                  <ActionButtons
+                    userId={question.userID}
+                    postId={question.id}
+                    post={question}
+                  />
+                }
               />
             </Grid>
             {index === 0 && props.isAnswer && <AnswerDivider />}
-          </>
+          </React.Fragment>
         ))}
       </Grid>
-    </div>
+    </>
   );
 }

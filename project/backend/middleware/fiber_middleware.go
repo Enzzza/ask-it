@@ -26,7 +26,7 @@ func FiberMiddleware(a *fiber.App) {
 		// Add rate limiting
 		limiter.New(
 			limiter.Config{
-				Max: 42,
+				Max: 200,
 				Next: func(c *fiber.Ctx) bool {
 					
 					excludePaths := []string{"views","scores"}

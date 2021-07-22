@@ -1,5 +1,5 @@
-import React, { useState, useContext } from 'react';
-import { Redirect, Link as RouterLink } from 'react-router-dom';
+import React, { useContext } from 'react';
+import {Link as RouterLink, useHistory,useLocation } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -17,6 +17,8 @@ import SignInForm from '../components/forms/SignInForm';
 
 import useCustomSnackbar from '../components/utils/snackbar/useCustomSnackbar';
 import { SpinnerContext } from '../contexts/SpinnerContext';
+
+
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -48,27 +50,26 @@ export default function SignIn() {
 
   const methods = useForm({ resolver: yupResolver(schema) });
 
-  const [redirect, setRedirect] = useState(false);
   const { isLoading, setLoaderState } = useContext(SpinnerContext);
   const snackbar = useCustomSnackbar();
 
-  const auth = useAuth();
+  let history = useHistory();
+  let location = useLocation();
+  let { from } = location.state || { from: { pathname: "/" } };
+  const auth  = useAuth();
 
   const formSubmitHandler = async ({ email, password }) => {
     setLoaderState(true);
     let { msg, user, error } = await auth.signin(email, password);
     if (!error) {
       snackbar.showSuccess(`Welcome ${user.displayName}`, 'Close', () => {});
-      setRedirect(true);
+      history.replace(from);
     } else {
       snackbar.showError(msg, 'Close', () => {});
     }
     setLoaderState(false);
   };
 
-  if (redirect) {
-    return <Redirect to='/' />;
-  }
   return (
     <Container component='main' maxWidth='xs'>
       <CssBaseline />

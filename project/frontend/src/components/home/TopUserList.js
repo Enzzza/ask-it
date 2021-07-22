@@ -9,8 +9,8 @@ import { Link as RouterLink } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { publicController } from '../../api/public';
 import { UserAvatar } from '../avatar/UserAvatar';
-import Icon from '@material-ui/core/Icon';
-
+import Error from '../utils/Error';
+import { ClassicSpinner } from "react-spinners-kit";
 
 const useStyles = makeStyles({
   mainTitle: {
@@ -41,16 +41,17 @@ const useStyles = makeStyles({
 });
 export default function TopUserList() {
   const classes = useStyles();
-  const { isLoading, isError, data, error } = useQuery(['top-users'], () =>
-    publicController.getUsersWithMostAnswers()
+  const { isLoading, isError, data, error } = useQuery(
+    ['users', 'answers', 'top'],
+    () => publicController.getUsersWithMostAnswers()
   );
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <ClassicSpinner loading={isLoading}/>
   }
 
   if (isError) {
-    return <span>Error: {error.message}</span>;
+    return <Error message={error.message} />;
   }
 
   return (
@@ -60,45 +61,48 @@ export default function TopUserList() {
           Users with most answers
         </Typography>
       </Box>
-      <Paper elevation={3}>
-        {data.answers.map((item, index) => (
-          <>
-            <Box>
-              <Box
-                display='flex'
-                alignItems='center'
-                justifyContent='space-between'
-                padding={1}
-                textAlign='center'
-              >
+      {data.length ? (
+        <Paper elevation={3}>
+          {data.map((item, index) => (
+            <React.Fragment key={item.id}>
+              <Box>
                 <Box
                   display='flex'
-                  flexDirection='column'
-                  marginLeft={'10px'}
-                  justifyContent='center'
                   alignItems='center'
+                  justifyContent='space-between'
+                  padding={1}
+                  textAlign='center'
                 >
-                  <RouterLink
-                    className={classes.title}
-                    to={`/users/profile/${item.id}`}
+                  <Box
+                    display='flex'
+                    flexDirection='column'
+                    marginLeft={'10px'}
+                    justifyContent='center'
+                    alignItems='center'
+                    flexBasis={'150px'}
+                    minWidth={'100px'}
                   >
-                    <Typography gutterBottom>@{item.displayName}</Typography>
-                  </RouterLink>
-                  <Box>
-                    <UserAvatar user={item} spacing={6} />
+                    <RouterLink
+                      className={classes.title}
+                      to={`/users/profile/${item.id}`}
+                    >
+                      <Typography gutterBottom>@{item.displayName}</Typography>
+                    </RouterLink>
+                    <Box>
+                      <UserAvatar user={item} spacing={6} />
+                    </Box>
                   </Box>
+
+                  <Box className={classes.box}>{item.answerCount}</Box>
                 </Box>
-                <Icon>star</Icon>
-                <Icon>star</Icon>
-                <Icon>star</Icon>
-                <Icon>star</Icon>
-                <Box className={classes.box}>{item.answerCount}</Box>
               </Box>
-            </Box>
-            {index + 1 !== data.answers.length && <Divider />}
-          </>
-        ))}
-      </Paper>
+              {index + 1 !== data.length && <Divider />}
+            </React.Fragment>
+          ))}
+        </Paper>
+      ) : (
+        <Box>There is no answers yet!</Box>
+      )}
     </div>
   );
 }

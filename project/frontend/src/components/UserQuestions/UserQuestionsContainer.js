@@ -8,6 +8,8 @@ import Pagination from '@material-ui/lab/Pagination';
 import { useQuery, useQueryClient } from 'react-query';
 import { userController } from '../../api/user';
 import { grey } from '@material-ui/core/colors';
+import Error from '../utils/Error';
+import LoadingSpinner from '../utils/LoadingSpinner';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,13 +20,13 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 50,
   },
   empty: {
-    display:'flex',
+    display: 'flex',
     alignItems: 'center',
-    justifyContent:'center',
-    width:'100%',
+    justifyContent: 'center',
+    width: '100%',
     fontSize: 20,
     color: grey[300],
-  }
+  },
 }));
 
 export default function UserQuestionsContainer(props) {
@@ -35,27 +37,30 @@ export default function UserQuestionsContainer(props) {
     setPage(value);
   };
 
-  const { isLoading, isError, data } = useQuery(
-    ['user-questions', page, { user: props.id }],
-    () => userController.getPaginatedUserQuestions(props.id, page),
-    { keepPreviousData: true }
+  const { isLoading, isError, error, data } = useQuery(
+    ['questions', page, { userId: props.userId }],
+    () => userController.getPaginatedUserQuestions(props.userId, page),
+    {
+      keepPreviousData: true,
+      staleTime: 5000,
+    }
   );
 
   useEffect(() => {
     if (data?.next) {
       queryClient.prefetchQuery(
-        ['user-questions', page + 1, { user: props.id }],
-        () => userController.getPaginatedUserQuestions(props.id, page + 1)
+        ['questions', page + 1, { userId: props.userId }],
+        () => userController.getPaginatedUserQuestions(props.userId, page + 1)
       );
     }
-  }, [data, page, queryClient, props.id]);
+  }, [data, page, queryClient, props.userId]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner isLoading={isLoading} />;
   }
 
   if (isError) {
-    return <span>Error</span>;
+    return <Error message={error.message} />;
   }
 
   return (

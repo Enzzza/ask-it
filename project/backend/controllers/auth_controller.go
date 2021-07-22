@@ -95,7 +95,7 @@ func Login(c *fiber.Ctx) error {
 
 	if err := database.DB.Where("email = ?", data["email"]).First(&user).Error; err != nil{
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"msg": "Couldn't query database!",
+			"msg": "That email doesn't exist!",
 			"error": true,
 		})
 	}
@@ -212,7 +212,7 @@ func UpdateDetails(c *fiber.Ctx) error {
 	fmt.Println(updateData);
 	if result := database.DB.Debug().Model(&user).Select("name","surname","email","profile_color","profile_shade").Updates(updateData); result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"msg": "Couldn't update details!",
+			"msg": "Couldn't update user details!",
 			"error": true,
 		})
 	}

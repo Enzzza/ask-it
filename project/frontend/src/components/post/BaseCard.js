@@ -8,18 +8,20 @@ import GetHumanizedTime from '../../utils/GetHumanizedTime';
 import { useQuery } from 'react-query';
 import { userController } from '../../api/user';
 import { UserAvatar } from '../avatar/UserAvatar';
+import Error from '../utils/Error';
+import LoadingSpinner from '../utils/LoadingSpinner';
 
 const useStyles = makeStyles({
   title: {
     lineHeight: 1.3,
     fontWeight: 400,
     color: lightBlue[500],
-    fontSize: 20,
+    fontSize: 24,
     textDecoration: 'none',
   },
   subtitle: {
     textAlign: 'left',
-    fontSize: 13,
+    fontSize: 16,
     color: grey[200],
   },
   timestampText: {
@@ -40,26 +42,33 @@ const truncate = (str, n) => {
 export default function BaseCard(props) {
   const classes = useStyles();
 
-  const { data, isLoading, isError } = useQuery(
+  const { data, isLoading, isError, error } = useQuery(
     ['users', props.question.userID],
     () => userController.getUserById(props.question.userID)
   );
 
   return (
-    <div>
+    <Box display='flex' flexDirection='column'>
       <Paper elevation={3} margin={1}>
         <Box display='flex' px={1} py='12px'>
           {props.sideComponent}
           <Box flexGrow={1}>
             <Box display='flex' flexDirection='column'>
               {!props.isAnswer ? (
-                <RouterLink className={classes.title} to={`/answers/${props.question.id}`}>
+                <RouterLink
+                  className={classes.title}
+                  to={`/answers/${props.question.id}`}
+                >
                   <Box component='span' marginBottom={1}>
                     {props.question.title}
                   </Box>
                 </RouterLink>
               ) : (
-                <Box component='span' marginBottom={1} className={classes.title}>
+                <Box
+                  component='span'
+                  marginBottom={1}
+                  className={classes.title}
+                >
                   {props.question.title}
                 </Box>
               )}
@@ -84,27 +93,29 @@ export default function BaseCard(props) {
                     asked {GetHumanizedTime(props.question.createdAt)}
                   </Box>
                   {isLoading ? (
-                    'Loading...'
+                   <LoadingSpinner isLoading={isLoading} />
                   ) : (
                     <Box display='flex' alignItems='center'>
-                      <UserAvatar user={data.user} spacing={6} />
+                      <UserAvatar user={data} spacing={6} />
                       <RouterLink
                         className={classes.userText}
                         to={`/users/profile/${props.question.userID}`}
                       >
                         <Box component='span' marginLeft={1}>
-                          @{data.user.displayName}
+                          @{data.displayName}
                         </Box>
                       </RouterLink>
                     </Box>
                   )}
-                  {isError && <div></div>}
+                  {isError && <Error message={error.message} />}
                 </Box>
               </Box>
             </Box>
           </Box>
         </Box>
       </Paper>
-    </div>
+
+      {props.isAnswer && props.actionComponent}
+    </Box>
   );
 }

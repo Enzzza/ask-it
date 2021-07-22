@@ -80,6 +80,7 @@ export default function PrimarySearchAppBar() {
     let { msg, error } = await auth.signout();
     if (!error) {
       snackbar.showInfo(msg, 'Close', () => {});
+      history.push('/');
     } else {
       snackbar.showError('Something bad happend! :/', 'Close', () => {});
     }

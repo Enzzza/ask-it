@@ -1,16 +1,37 @@
 export const scoreController = {
   async getTopScoreQuestions() {
-    const response = await fetch(
-      `http://localhost:8000/api/v1/scores/top`,
-      {
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    const response = await fetch(`http://localhost:8000/api/v1/scores/top`, {
+      headers: { 'Content-Type': 'application/json' },
+    });
 
     if (!response.ok) {
-      throw new Error('Server is down, please try again later!');
+      throw new Error(`Top questions: ${response.statusText}`);
     }
 
-    return response.json();
+    const content = await response.json();
+    const { questions } = content;
+
+    return questions;
+  },
+
+  async addScore(postId, vote) {
+    const response = await fetch(`http://localhost:8000/api/v1/scores/add`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        postID: postId,
+        vote: vote,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Vote: ${response.statusText}`);
+    }
+
+    const content = await response.json();
+    const { post } = content;
+
+    return post;
   },
 };

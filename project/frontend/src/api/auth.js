@@ -8,17 +8,16 @@ export const authController = {
         email,
         password,
       }),
-    }).catch((err) => {
-      return { error: true, msg: 'Server is down, please try again later!' };
     });
 
-    if (response.error) {
-      return response;
+    try {
+      if (!response.ok) {
+        throw response;
+      }
+      return response.json();
+    } catch (error) {
+      return error.json();
     }
-
-    const content = await response.json();
-
-    return content;
   },
 
   async signup(data) {
@@ -29,16 +28,16 @@ export const authController = {
       body: JSON.stringify({
         ...data,
       }),
-    }).catch((err) => {
-      return { error: true, msg: 'Server is down, please try again later!' };
     });
 
-    if (response.error) {
-      return response;
+    try {
+      if (!response.ok) {
+        throw response;
+      }
+      return response.json();
+    } catch (error) {
+      return error.json();
     }
-
-    const content = await response.json();
-    return content;
   },
 
   async signout() {
@@ -46,74 +45,79 @@ export const authController = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-    }).catch((err) => {
-      return { error: true, msg: 'Server is down, please try again later!' };
     });
-    if (response.error) {
-      return response;
+
+    try {
+      if (!response.ok) {
+        throw response;
+      }
+      return response.json();
+    } catch (error) {
+      return error.json();
     }
-
-    const content = await response.json();
-
-    return content;
   },
 
   async me() {
     const response = await fetch('http://localhost:8000/api/v1/auth/me', {
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-    }).catch((err) => {
-      return { error: true, msg: 'Server is down, please try again later!' };
     });
 
-    if (response.error) {
-      return response;
+    try {
+      if (!response.ok) {
+        throw response;
+      }
+      return response.json();
+    } catch (error) {
+      return error.json();
     }
-    const content = await response.json();
-
-    return content;
   },
-
-
+  // adjust this if we will use react query!
   async updateDetails(data) {
-    const response = await fetch(`http://localhost:8000/api/v1/auth/updatedetails`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({
-        ...data,
-      }),
-    }).catch((err) => {
-      return { error: true, msg: 'Server is down, please try again later!' };
-    });
+    const response = await fetch(
+      `http://localhost:8000/api/v1/auth/updatedetails`,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          ...data,
+        }),
+      }
+    );
 
-    if (response.error) {
-      return response;
+    try {
+      if (!response.ok) {
+        throw response;
+      }
+      return response.json();
+    } catch (error) {
+      return error.json();
     }
-
-    const content = await response.json();
-    return content;
   },
 
+  // adjust this if we will use react query!
   async updatePassword(data) {
-    const response = await fetch(`http://localhost:8000/api/v1/auth/updatepassword`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({
-        ...data,
-      }),
-    }).catch((err) => {
-      return { error: true, msg: 'Server is down, please try again later!' };
-    });
+    const response = await fetch(
+      `http://localhost:8000/api/v1/auth/updatepassword`,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          ...data,
+        }),
+      }
+    );
 
-    if (response.error) {
-      return response;
+    try {
+      if (!response.ok) {
+        throw response;
+      }
+      return response.json();
+    } catch (error) {
+      return error.json();
     }
 
-    const content = await response.json();
-    return content;
-  }
-
-
+  },
 };

@@ -21,7 +21,7 @@ import (
 // @Param postID body integer true "Post ID"
 // @Param vote body integer true "Vote"
 // @Produce json
-// @Success 200 {string} status "ok"
+// @Success 200 {object} models.Post
 // @Security ApiKeyAuth
 // @Router /v1/scores/add [post]
 func AddScore(c *fiber.Ctx) error {
@@ -35,7 +35,7 @@ func AddScore(c *fiber.Ctx) error {
 
 
 	id:= uint(data["postID"])
-
+	vote:= data["vote"]
 	// Find voter
 	var user models.User
 	userId := fmt.Sprintf("%v", c.Locals("id"))
@@ -52,27 +52,30 @@ func AddScore(c *fiber.Ctx) error {
 	json.Unmarshal(user.Votes,&votes)
 
 	// Check if user already voted for post 
-	if _, ok := votes.Posts[strconv.Itoa(int(id))]; ok {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"msg": "You already voted for this post!",
-			"error": true,
-		})
+	if val, ok := votes.Posts[strconv.Itoa(int(id))]; ok {
+
+		if val.Vote == vote {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"msg": "You already voted for this post!",
+				"error": true,
+			})
+		}
+
 	}
 	
 	
-	
-	vote:= data["vote"]
-	
-	if vote < -1 || vote > 1{
+	if vote < -1 || vote > 1 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"msg" : "Vote can be only 1 or -1",
 			"error" : true,
 		})
 	}
 
+	// Get model if exist
+	post:= &models.Post{}
+
 	err := database.DB.Transaction(func(tx *gorm.DB) error {
-		// Get model if exist
-		post:= &models.Post{}
+		
 		if err := tx.Where("id = ?", id).First(&post).Error; err != nil {
             return err
         }
@@ -125,6 +128,7 @@ func AddScore(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"msg": "Vote added",
 		"error": false,
+		"post": post,
 	})
 
 }
@@ -176,9 +180,8 @@ func GetTopScoreQuestions(c *fiber.Ctx) error {
 	}
 	return c.JSON(fiber.Map{
 		"msg": "List of top questions",
-		"score": posts,
+		"questions": posts,
 		"error": false,
 		"count": len(posts),
 	})
 }
-

@@ -1,5 +1,4 @@
 export const publicController = {
-  
   async getPublicQuestionsById(userID) {
     const response = await fetch(
       `http://localhost:8000/api/v1/public/questions/${userID}`,
@@ -9,30 +8,33 @@ export const publicController = {
     );
 
     if (!response.ok) {
-      throw new Error('Server is down, please try again later!');
+      throw new Error(`Questions: ${response.statusText}`);
     }
+    
+    const content = await response.json();
+    const { questions } = content;
 
-    return response.json();
+    return questions;
   },
 
   async getPaginatedPublicQuestions(page, pageSize = 20) {
-    
     const response = await fetch(
       `http://localhost:8000/api/v1/public/questions/${page}-${pageSize}`,
       {
         headers: { 'Content-Type': 'application/json' },
       }
     );
-
     if (!response.ok) {
-      throw new Error('Server is down, please try again later!');
+      throw new Error(`Questions: ${response.statusText}`);
     }
 
-    return response.json();
+    const content = await response.json();
+    const { error, msg, ...obj } = content;
+
+    return obj;
   },
-  
+
   async getUsersWithMostAnswers() {
-    
     const response = await fetch(
       `http://localhost:8000/api/v1/public/top-answers`,
       {
@@ -41,14 +43,16 @@ export const publicController = {
     );
 
     if (!response.ok) {
-      throw new Error('Server is down, please try again later!');
+      throw new Error(`Top answers: ${response.statusText}`);
     }
 
-    return response.json();
-  },
-  
+    const content = await response.json();
+    const { answers } = content;
 
-  async getAnswersForQuestion(questionID){
+    return answers;
+  },
+
+  async getAnswersForQuestion(questionID) {
     const response = await fetch(
       `http://localhost:8000/api/v1/public/answers/${questionID}`,
       {
@@ -57,10 +61,12 @@ export const publicController = {
     );
 
     if (!response.ok) {
-      throw new Error('Server is down, please try again later!');
+      throw new Error(`Answers: ${response.statusText}`);
     }
 
-    return response.json();
-  }
+    const content = await response.json();
+    const { answers } = content;
 
+    return answers;
+  },
 };

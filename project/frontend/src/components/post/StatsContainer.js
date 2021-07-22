@@ -26,7 +26,7 @@ export default function StatsContainer(props) {
           {props.votes}
         </Box>
         <Box component='span' className={classes.statsText}>
-          votes
+          {props.votes === 1 ? 'vote' : 'votes'}
         </Box>
       </Box>
       <Box
@@ -41,7 +41,7 @@ export default function StatsContainer(props) {
           {props.answers}
         </Box>
         <Box component='span' className={classes.statsText}>
-          answers
+          {props.answers === 1 ? 'answer' : 'answers'}
         </Box>
       </Box>
 
@@ -52,7 +52,7 @@ export default function StatsContainer(props) {
         paddingTop='4px'
       >
         <Box component='span' className={classes.statsText}>
-          {props.views} views
+          {props.views} {props.views === 1 ? 'view' : 'views'}
         </Box>
       </Box>
     </Box>

@@ -2,7 +2,7 @@ import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import { useFormContext, Controller } from 'react-hook-form';
 
-export default function AnswerForm() {
+export default function AnswerForm(props) {
   const {
     control,
     formState: { errors },
@@ -25,6 +25,7 @@ export default function AnswerForm() {
           error={!!errors.answer}
           helperText={errors.answer ? errors.answer?.message : ''}
           id='answer'
+          disabled={props.disabled}
         />
       )}
     />
