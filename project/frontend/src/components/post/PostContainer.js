@@ -9,6 +9,7 @@ const addMoreProps = (component, item) => {
     votes: item.score,
     answers: item.answerCount,
     views: item.viewCount,
+    userId: item.userID,
   });
 };
 

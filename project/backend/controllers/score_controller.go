@@ -43,7 +43,7 @@ func AddScore(c *fiber.Ctx) error {
 
 	if result := database.DB.Where("id = ?", userId).First(&user); result.Error != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"msg": "Couldn't add view!",
+			"msg": "Couldn't add vote!",
 			"error": true,
 		})
 	}
@@ -119,7 +119,7 @@ func AddScore(c *fiber.Ctx) error {
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"msg":   "Couldn't add view",
+			"msg":   "Couldn't add score",
 			"error": true,
 		})
 	}
@@ -172,7 +172,7 @@ func GetScore(c *fiber.Ctx) error {
 func GetTopScoreQuestions(c *fiber.Ctx) error {
 	var posts []models.Post
 
-	if err := database.DB.Order("score desc").Limit(20).Where("parent_id= ? AND score!= ?",0,0).Find(&posts).Error; err != nil{
+	if err := database.DB.Order("score desc").Limit(20).Where("parent_id= ? AND score>= ?",0,1).Find(&posts).Error; err != nil{
 		return c.JSON(fiber.Map{
 			"msg": "Couldn't query database",
 			"error": true,

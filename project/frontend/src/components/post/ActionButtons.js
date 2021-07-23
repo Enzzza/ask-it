@@ -70,21 +70,25 @@ export default function ActionButtons(props) {
   };
 
   return (
-    <Box display='flex' justifyContent='flex-end' marginTop={1}>
-      {auth.user.id === props.userId && (
-        <>
-          <Box>
-            <IconButton aria-label='edit' onClick={editPost}>
-              <EditIcon className={classes.editBtn} />
-            </IconButton>
-          </Box>
-          <Box>
-            <IconButton aria-label='delete' onClick={deletePost}>
-              <DeleteIcon className={classes.deleteBtn} />
-            </IconButton>
-          </Box>
-        </>
+    <>
+      {auth.user && (
+        <Box display='flex' justifyContent='flex-end' marginTop={1}>
+          {auth.user.id === props.userId && (
+            <>
+              <Box>
+                <IconButton aria-label='edit' onClick={editPost}>
+                  <EditIcon className={classes.editBtn} />
+                </IconButton>
+              </Box>
+              <Box>
+                <IconButton aria-label='delete' onClick={deletePost}>
+                  <DeleteIcon className={classes.deleteBtn} />
+                </IconButton>
+              </Box>
+            </>
+          )}
+        </Box>
       )}
-    </Box>
+    </>
   );
 }

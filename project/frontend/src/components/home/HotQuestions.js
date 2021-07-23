@@ -86,7 +86,7 @@ export default function HotQuestions() {
                     to={`/answers/${item.id}`}
                   >
                     <Typography gutterBottom>
-                      {truncate(item.title, 40)}
+                      {truncate(item.title, 25)}
                     </Typography>
                   </RouterLink>
                 </Box>
