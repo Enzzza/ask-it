@@ -4,16 +4,9 @@ import AnswersContainer from '../components/answers/AnswersContainer';
 import { useMutation, useQueryClient } from 'react-query';
 import { viewController } from '../api/view';
 
-
 export default function Answers() {
-  // let scroll = Scroll.animateScroll;
-  // scroll.scrollTo(100, {
-  //   duration: 800,
-  //   delay: 0,
-  //   smooth: 'easeInOutQuart',
-  //   activeClass: 'active',
-  // });
-  let { questionId, answerId } = useParams();
+
+  let { questionId } = useParams();
   const queryClient = useQueryClient();
 
   const mutation = useMutation(
@@ -30,5 +23,5 @@ export default function Answers() {
     mutation.mutate(parseInt(questionId));
   }, []);
 
-  return <AnswersContainer questionId={questionId} answerId={answerId} />;
+  return <AnswersContainer questionId={questionId} />;
 }

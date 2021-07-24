@@ -1,4 +1,4 @@
-import React, { useContext,useEffect } from 'react';
+import React, { useContext } from 'react';
 import PostContainer from '../post/PostContainer';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AnswersContainer(props) {
   const auth = useAuth();
- 
+
   const history = useHistory();
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -140,8 +140,12 @@ export default function AnswersContainer(props) {
             }
             isAnswer={true}
             questions={[data, ...questions]}
-            answerId={props.answerId}
           />
+        </Grid>
+        <Grid container>
+          <Box>
+            <Button>Load more answers!</Button>
+          </Box>
         </Grid>
         <Grid container>
           <Box marginTop={10} width={'100%'}>

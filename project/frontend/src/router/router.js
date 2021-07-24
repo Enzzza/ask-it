@@ -13,6 +13,7 @@ import {useAuth} from "../contexts/AuthContext";
 import UserQuestions from '../pages/UserQuestions';
 import NewQuestion from '../pages/NewQuestion';
 import Edit from '../pages/Edit';
+import Test from '../pages/Test';
 export default function Router() {
   const auth = useAuth();
   useEffect(() => {
@@ -40,11 +41,14 @@ export default function Router() {
           <Route path='/users/questions/:userId'>
             <UserQuestions />
           </Route>
-          <Route path='/answers/:questionId/:answerId?'>
+          <Route path='/answers/:questionId'>
             <Answers />
           </Route>
           <Route path='/edit/:postId'>
             <Edit />
+          </Route>
+          <Route path='/test/:questionId'>
+            <Test/>
           </Route>
           <PrivateRoute path='/ask'>
             <NewQuestion/>

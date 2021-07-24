@@ -70,9 +70,10 @@ export const publicController = {
     return answers;
   },
 
-  async getPaginatedAnswersForQuestion(questionID, page, pageSize = 20) {
+  async getPaginatedAnswersForQuestion(url) {
+    console.log(url);
     const response = await fetch(
-      `http://localhost:8000/api/v1/public/answers/${questionID}/${page}-${pageSize}`,
+      `${url}`,
       {
         headers: { 'Content-Type': 'application/json' },
       }

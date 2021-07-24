@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import NotificationBell from './NotificationBell';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
@@ -13,7 +13,6 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import { UserAvatar } from '../../avatar/UserAvatar';
 import { Link as RouterLink } from 'react-router-dom';
 import { useSagaState } from 'react-context-saga';
-import { useQueryClient } from 'react-query';
 
 import {
   usePopupState,
@@ -38,7 +37,6 @@ const truncate = (str, n) => {
 };
 
 export default function Notification() {
-  const queryClient = useQueryClient();
   const notificationPopupState = usePopupState({
     variant: 'popover',
     popupId: 'userNotifications',
@@ -46,23 +44,6 @@ export default function Notification() {
   const classes = useStyles();
 
   const [state, dispatch] = useSagaState('websocket');
-
-  const handleLinkClick = (item) => {
-    notificationPopupState.close();
-    dispatch({
-      type: 'deleteNotificationById',
-      payload: { id: item.newPost.id },
-    });
-    //['questions', 'answers', { questionId: props.questionId }]
-
-    let oldQuestions = queryClient.getQueryData(
-      ['questions', 'answers', { questionId: item.orginalPost.id.toString() }],
-      { exact: true }
-    );
-    console.log('old questions');
-    console.log(oldQuestions);
-    
-  };
 
   return (
     <>
@@ -84,8 +65,14 @@ export default function Notification() {
                 key={item.newPost.id.toString()}
                 button
                 component={RouterLink}
-                to={`/answers/${item.orginalPost.id}/${item.newPost.id}`}
-                onClick={() => handleLinkClick(item)}
+                to={`/answers/${item.orginalPost.id}`}
+                onClick={() => {
+                  notificationPopupState.close();
+                  dispatch({
+                    type: 'deleteNotificationById',
+                    payload: { id: item.newPost.id },
+                  });
+                }}
               >
                 <ListItemAvatar>
                   <UserAvatar user={item.sender} />
