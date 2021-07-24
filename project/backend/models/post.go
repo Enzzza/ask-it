@@ -25,11 +25,13 @@ type Post struct {
 
 func (p *Post) AfterSave(tx *gorm.DB) (err error) {
 
-	if p.ParentId > 0 {
+	
+	if p.ParentId > 0 && p.CreatedAt.Equal(p.UpdatedAt) {
 		post:= &Post{}
 	  	user:= &User{}
 	  	tx.First(&post, p.ParentId)
 	  	tx.First(&user,p.UserID)
+
 	  
 	  	tx.Model(&User{}).Where("id = ?",p.UserID).Update("answer_count", user.AnswerCount + 1)
 	  	tx.Model(&Post{}).Where("id = ?", p.ParentId).Update("answer_count", post.AnswerCount + 1)

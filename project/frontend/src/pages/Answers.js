@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import Scroll from 'react-scroll';
 import AnswersContainer from '../components/answers/AnswersContainer';
 import { useMutation, useQueryClient } from 'react-query';
 import { viewController } from '../api/view';

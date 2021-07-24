@@ -100,6 +100,48 @@ func GetAnswersForQuestion(c *fiber.Ctx) error {
 	
 }
 
+
+// GetPaginatedAnswersForQuestion func will return paginated user answers for question
+// @Description Return paginated user answers 
+// @Summary Return paginated answers for provided questionid
+// @Tags Public
+// @Accept json
+// @Produce json
+// @Param questionID path integer  true "Question ID"
+// @Param page path integer  true "Page"
+// @Param pageSize path integer  true "Page Size"
+// @Success 200 {array} models.Post
+// @Router /v1/public/answers/:questionID/:page-:pageSize [get]
+func GetPaginatedAnswersForQuestion(c *fiber.Ctx) error {
+
+	id := c.Params("questionID")
+	var answers []models.Post
+
+	if err := database.DB.Scopes(utils.Paginate(c)).Where("id != ? AND parent_id= ?",id,id).Find(&answers).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": "Couldn't query database!",
+			"error": true,
+		})
+	}
+
+	var allAnswers []models.Post
+	if err := database.DB.Where("id != ? AND parent_id= ?",id,id).Find(&allAnswers).Error; err!= nil{
+		fmt.Println("Couldn't query database")
+	}
+	prev, next := utils.GetPaginationMsg(c,len(allAnswers))
+	
+	return c.JSON(fiber.Map{
+		"msg": fmt.Sprintf("Number of answers found for question %v", len(answers)),
+		"total": len(allAnswers),
+		"answers": answers,
+		"error": false,
+		"prev": prev,
+		"next": next,
+		"count": len(answers),
+	})
+	
+}
+
 // GetUsersWithMostAnswers func will return users with most answers
 // @Description Return list of users
 // @Summary Return list of users with most answers

@@ -140,6 +140,7 @@ export default function AnswersContainer(props) {
             }
             isAnswer={true}
             questions={[data, ...questions]}
+            answerId={props.answerId}
           />
         </Grid>
         <Grid container>

@@ -10,7 +10,7 @@ export const publicController = {
     if (!response.ok) {
       throw new Error(`Questions: ${response.statusText}`);
     }
-    
+
     const content = await response.json();
     const { questions } = content;
 
@@ -69,4 +69,22 @@ export const publicController = {
 
     return answers;
   },
+
+  async getPaginatedAnswersForQuestion(questionID, page, pageSize = 20) {
+    const response = await fetch(
+      `http://localhost:8000/api/v1/public/answers/${questionID}/${page}-${pageSize}`,
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+    if (!response.ok) {
+      throw new Error(`Answers: ${response.statusText}`);
+    }
+
+    const content = await response.json();
+    const { error, msg, ...obj } = content;
+
+    return obj;
+  },
+  
 };

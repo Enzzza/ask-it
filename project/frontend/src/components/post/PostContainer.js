@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import BaseCard from './BaseCard';
 import AnswerDivider from '../answers/AnswerDivider';
 import ActionButtons from './ActionButtons';
+import Scroll from 'react-scroll';
 const addMoreProps = (component, item) => {
   return React.cloneElement(component, {
     id: item.id,
@@ -14,6 +15,12 @@ const addMoreProps = (component, item) => {
 };
 
 export default function PostContainer(props) {
+  const scroll = Scroll.animateScroll;
+  useEffect(() => {
+    if (props.answerId) {
+      scroll.scrollToBottom({ duration: 1500, delay: 100, smooth: true });
+    }
+  }, [props.answerId, scroll]);
   return (
     <>
       <Grid container spacing={3}>
