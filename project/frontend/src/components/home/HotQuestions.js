@@ -10,7 +10,7 @@ import { useQuery } from 'react-query';
 import { scoreController } from '../../api/score';
 import Icon from '@material-ui/core/Icon';
 import Error from '../utils/Error';
-import { ClassicSpinner } from "react-spinners-kit";
+import { ClassicSpinner } from 'react-spinners-kit';
 
 const useStyles = makeStyles({
   mainTitle: {
@@ -50,7 +50,7 @@ export default function HotQuestions() {
   );
 
   if (isLoading) {
-    return <ClassicSpinner loading={isLoading}/>
+    return <ClassicSpinner loading={isLoading} />;
   }
 
   if (isError) {

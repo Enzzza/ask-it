@@ -12,15 +12,13 @@ import { UserAvatar } from '../avatar/UserAvatar';
 import Email from '@material-ui/icons/Email';
 import Question from '@material-ui/icons/Help';
 import Answer from '@material-ui/icons/QuestionAnswer';
-import { teal, lightBlue, deepOrange} from '@material-ui/core/colors';
+import { teal, lightBlue, deepOrange } from '@material-ui/core/colors';
 import IconButton from '@material-ui/core/IconButton';
-import { useHistory } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
 import GetHumanizedTime from '../../utils/GetHumanizedTime';
 
-
-const AccountProfile = (props,context) => {
+const AccountProfile = (props, context) => {
   const history = useHistory();
-  
 
   let user = props.user;
   let displayName = user.displayName;
@@ -96,7 +94,10 @@ const AccountProfile = (props,context) => {
                 <Avatar
                   style={{ backgroundColor: teal[600], height: 56, width: 56 }}
                 >
-                  <IconButton color='inherit' onClick={() => history.push(`/users/questions/${user.id}`)}>
+                  <IconButton
+                    color='inherit'
+                    onClick={() => history.push(`/users/questions/${user.id}`)}
+                  >
                     <Question />
                   </IconButton>
                 </Avatar>

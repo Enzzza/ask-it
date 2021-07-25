@@ -1,8 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useContext } from 'react';
-import { RotateSpinner  } from 'react-spinners-kit';
+import { RotateSpinner } from 'react-spinners-kit';
 import { SpinnerContext } from '../../contexts/SpinnerContext';
-
 
 const useStyles = makeStyles((theme) => ({
   spinner: {
@@ -11,7 +10,6 @@ const useStyles = makeStyles((theme) => ({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    
   },
 }));
 
@@ -21,9 +19,7 @@ export const Spinner = (props) => {
 
   return (
     <div className={classes.spinner}>
-      <RotateSpinner  size={45} color="#005A34" loading={isLoading} />
+      <RotateSpinner size={45} color='#005A34' loading={isLoading} />
     </div>
   );
 };
-
-

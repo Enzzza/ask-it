@@ -33,7 +33,7 @@ export default function SignUpForm() {
           <Controller
             name='name'
             control={control}
-            defaultValue=""
+            defaultValue=''
             render={({ field }) => (
               <TextField
                 {...field}
@@ -53,7 +53,7 @@ export default function SignUpForm() {
           <Controller
             name='surname'
             control={control}
-            defaultValue=""
+            defaultValue=''
             render={({ field }) => (
               <TextField
                 {...field}
@@ -72,7 +72,7 @@ export default function SignUpForm() {
           <Controller
             name='email'
             control={control}
-            defaultValue=""
+            defaultValue=''
             render={({ field }) => (
               <TextField
                 {...field}
@@ -92,7 +92,7 @@ export default function SignUpForm() {
           <Controller
             name='password'
             control={control}
-            defaultValue=""
+            defaultValue=''
             render={({ field }) => (
               <TextField
                 {...field}
@@ -125,7 +125,7 @@ export default function SignUpForm() {
           <Controller
             name='confirmPassword'
             control={control}
-            defaultValue=""
+            defaultValue=''
             render={({ field }) => (
               <TextField
                 {...field}
@@ -135,7 +135,9 @@ export default function SignUpForm() {
                 label='Confirm Password'
                 autoComplete='new-password'
                 error={!!errors.confirmPassword}
-                helperText={errors.confirmPassword ? errors.confirmPassword?.message : ''}
+                helperText={
+                  errors.confirmPassword ? errors.confirmPassword?.message : ''
+                }
                 type={showCurrentPassword ? 'text' : 'password'}
                 InputProps={{
                   endAdornment: (

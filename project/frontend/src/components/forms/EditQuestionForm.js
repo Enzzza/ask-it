@@ -23,7 +23,9 @@ export default function EditQuestionForm(props) {
               id='questionTitle'
               label='Title'
               error={!!errors.questionTitle}
-              helperText={errors.questionTitle ? errors.questionTitle?.message : ''}
+              helperText={
+                errors.questionTitle ? errors.questionTitle?.message : ''
+              }
             />
           )}
         />
@@ -44,7 +46,9 @@ export default function EditQuestionForm(props) {
               label='Body'
               id='questionBody'
               error={!!errors.questionBody}
-              helperText={errors.questionBody ? errors.questionBody?.message : ''}
+              helperText={
+                errors.questionBody ? errors.questionBody?.message : ''
+              }
             />
           )}
         />

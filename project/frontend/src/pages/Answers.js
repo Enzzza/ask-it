@@ -5,7 +5,6 @@ import { useMutation, useQueryClient } from 'react-query';
 import { viewController } from '../api/view';
 
 export default function Answers() {
-
   let { questionId } = useParams();
   const queryClient = useQueryClient();
 

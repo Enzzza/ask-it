@@ -51,13 +51,13 @@ async function disconnect(state, payload, dispatch) {
 // Add offline notifications
 async function addNotifications(state, payload, dispatch) {
   // Check if payload is array
-  let storedNotifications = state.get('notifications')
+  let storedNotifications = state.get('notifications');
   let recivedNotifications;
 
-  if(Array.isArray(payload.notifications)){
-    recivedNotifications = [...storedNotifications,...payload.notifications]
-  }else {
-    recivedNotifications = [...storedNotifications,payload.notifications]
+  if (Array.isArray(payload.notifications)) {
+    recivedNotifications = [...storedNotifications, ...payload.notifications];
+  } else {
+    recivedNotifications = [...storedNotifications, payload.notifications];
   }
 
   dispatch({

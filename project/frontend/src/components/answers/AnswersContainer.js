@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import PostContainer from '../post/PostContainer';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import VotingContainer from '../post/VotingContainer';
@@ -17,12 +16,21 @@ import { SpinnerContext } from '../../contexts/SpinnerContext';
 import Error from '../utils/Error';
 import LoadingSpinner from '../utils/LoadingSpinner';
 
-import { useQuery, useMutation, useQueryClient } from 'react-query';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  useInfiniteQuery,
+} from 'react-query';
 import { postController } from '../../api/post';
 import { publicController } from '../../api/public';
 
 import { useAuth } from '../../contexts/AuthContext';
 import { useHistory, useLocation } from 'react-router-dom';
+import BaseCard from '../post/BaseCard';
+import ActionButtons from '../post/ActionButtons';
+import AnswerDivider from './AnswerDivider';
+import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -91,25 +99,47 @@ export default function AnswersContainer(props) {
   const {
     isLoading: isQuestionLoading,
     isError: isQuestionError,
-    data,
+    data: question,
     error: questionError,
   } = useQuery(['questions', { questionId: props.questionId }], () =>
     postController.getQuestionPost(props.questionId)
   );
 
-  const questionId = data?.id;
+  const questionId = question?.id;
+
+  const fetchAnswers = ({
+    pageParam = `http://localhost:8000/api/v1/public/answers/${
+      props.questionId
+    }/${1}-${5}`,
+  }) => {
+    return publicController.getPaginatedAnswersForQuestion(pageParam);
+  };
 
   const {
     isLoading: isAnswersLoading,
-    isError: isAnswersError,
     data: questions,
-  } = useQuery(
+    error: answersError,
+    isError: isAnswersError,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery(
     ['questions', 'answers', { questionId: props.questionId }],
-    () => publicController.getAnswersForQuestion(props.questionId),
+    fetchAnswers,
     {
+      getPreviousPageParam: (firstPage) => firstPage.prev ?? false,
+      getNextPageParam: (lastPage) => lastPage.next ?? false,
       enabled: !!questionId,
     }
   );
+
+  const loadMoreButtonRef = React.useRef();
+
+  useIntersectionObserver({
+    target: loadMoreButtonRef,
+    onIntersect: fetchNextPage,
+    enabled: hasNextPage,
+  });
 
   if (isQuestionLoading) {
     return <LoadingSpinner isLoading={isQuestionLoading} />;
@@ -124,27 +154,80 @@ export default function AnswersContainer(props) {
   }
 
   if (isAnswersError) {
-    return <Error message={isAnswersError.message} />;
+    return <Error message={answersError.message} />;
   }
 
   return (
     <div className={classes.root}>
       <Grid container>
         <Grid item xs={12}>
-          <PostContainer
-            sideComponent={
-              <VotingContainer
-                isAuth={!!auth.user}
-                user={auth.user ? auth.user : null}
-              />
-            }
-            isAnswer={true}
-            questions={[data, ...questions]}
-          />
+          <>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <BaseCard
+                  sideComponent={
+                    <VotingContainer
+                      isAuth={!!auth.user}
+                      user={auth.user ? auth.user : null}
+                      id={question.id}
+                      votes={question.score}
+                    />
+                  }
+                  question={question}
+                  isAnswer={true}
+                  actionComponent={
+                    <ActionButtons
+                      userId={question.userID}
+                      postId={question.id}
+                      post={question}
+                    />
+                  }
+                />
+              </Grid>
+              <AnswerDivider />
+              {questions.pages.map((page) => (
+                <React.Fragment key={page.next}>
+                  {page.answers.map((item) => (
+                    <Grid item xs={12} key={item.id}>
+                      <BaseCard
+                        sideComponent={
+                          <VotingContainer
+                            isAuth={!!auth.user}
+                            user={auth.user ? auth.user : null}
+                            id={item.id}
+                            votes={item.score}
+                          />
+                        }
+                        question={item}
+                        isAnswer={true}
+                        actionComponent={
+                          <ActionButtons
+                            userId={item.userID}
+                            postId={item.id}
+                            post={item}
+                          />
+                        }
+                      />
+                    </Grid>
+                  ))}
+                </React.Fragment>
+              ))}
+            </Grid>
+          </>
         </Grid>
         <Grid container>
-          <Box>
-            <Button>Load more answers!</Button>
+          <Box marginTop={2} marginLeft={2}>
+            <Button
+              ref={loadMoreButtonRef}
+              onClick={() => fetchNextPage()}
+              disabled={!hasNextPage || isFetchingNextPage}
+            >
+              {isFetchingNextPage
+                ? 'Loading more...'
+                : hasNextPage
+                ? 'Load Newer'
+                : 'Nothing more to load'}
+            </Button>
           </Box>
         </Grid>
         <Grid container>

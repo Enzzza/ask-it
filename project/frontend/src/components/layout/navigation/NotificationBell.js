@@ -7,11 +7,9 @@ import { useSagaState } from 'react-context-saga';
 export default function NotificationBell() {
   const auth = useAuth();
   const [state, dispatch] = useSagaState('websocket');
-  
-  
 
   useEffect(() => {
-    console.log("connect!");
+    console.log('connect!');
     dispatch({ type: 'connect', payload: { id: auth.user.id } });
     return () => {
       console.log('disconect');
@@ -20,12 +18,7 @@ export default function NotificationBell() {
   }, []);
 
   return (
-    <Badge
-      badgeContent={
-        (state.get('notifications')).length
-      }
-      color='secondary'
-    >
+    <Badge badgeContent={state.get('notifications').length} color='secondary'>
       <NotificationsIcon style={{ fontSize: 25 }} />
     </Badge>
   );

@@ -9,17 +9,15 @@ const colors = {
   orange: orange,
 };
 
-const GenerateUserAvatarStyle = (profileColor, profileShade,spacing=5) => {
-  
-  
+const GenerateUserAvatarStyle = (profileColor, profileShade, spacing = 5) => {
   return makeStyles((theme) => ({
     profileColor: {
       color: theme.palette.getContrastText(colors[profileColor][profileShade]),
       backgroundColor: colors[profileColor][profileShade],
     },
     size: {
-        width: theme.spacing(spacing),
-        height: theme.spacing(spacing),
+      width: theme.spacing(spacing),
+      height: theme.spacing(spacing),
     },
   }));
 };

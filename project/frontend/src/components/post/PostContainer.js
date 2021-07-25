@@ -1,7 +1,6 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import BaseCard from './BaseCard';
-import AnswerDivider from '../answers/AnswerDivider';
 import ActionButtons from './ActionButtons';
 const addMoreProps = (component, item) => {
   return React.cloneElement(component, {
@@ -33,7 +32,6 @@ export default function PostContainer(props) {
                 }
               />
             </Grid>
-            {index === 0 && props.isAnswer && <AnswerDivider />}
           </React.Fragment>
         ))}
       </Grid>

@@ -13,13 +13,10 @@ export default function SignUpForm() {
     formState: { errors },
   } = useFormContext();
   const [showPassword, setShowPassword] = useState(false);
- 
 
   const handleClickShowPassword = () => {
     setShowPassword((p) => !p);
   };
-
- 
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();

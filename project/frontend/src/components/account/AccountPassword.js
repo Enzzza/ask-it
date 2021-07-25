@@ -60,7 +60,12 @@ const AccountPassword = () => {
           </CardContent>
           <Divider />
           <Box display='flex' m={2} justifyContent='flex-end'>
-            <Button color='primary' variant='contained' type='submit' disabled={isLoading}>
+            <Button
+              color='primary'
+              variant='contained'
+              type='submit'
+              disabled={isLoading}
+            >
               Update
             </Button>
           </Box>

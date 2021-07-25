@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route, BrowserRouter } from 'react-router-dom';
 import MainNavigation from '../components/layout/navigation/MainNavigation';
 import Home from '../pages/Home';
@@ -9,11 +9,10 @@ import Profile from '../pages/Profile';
 import NotFound from '../pages/NotFound';
 import PrivateRoute from './PrivateRoute';
 import Answers from '../pages/Answers';
-import {useAuth} from "../contexts/AuthContext";
+import { useAuth } from '../contexts/AuthContext';
 import UserQuestions from '../pages/UserQuestions';
 import NewQuestion from '../pages/NewQuestion';
 import Edit from '../pages/Edit';
-import Test from '../pages/Test';
 export default function Router() {
   const auth = useAuth();
   useEffect(() => {
@@ -23,7 +22,6 @@ export default function Router() {
   return (
     <BrowserRouter>
       <div>
-      
         <MainNavigation />
         <Switch>
           <Route path='/' exact>
@@ -47,17 +45,14 @@ export default function Router() {
           <Route path='/edit/:postId'>
             <Edit />
           </Route>
-          <Route path='/test/:questionId'>
-            <Test/>
-          </Route>
           <PrivateRoute path='/ask'>
-            <NewQuestion/>
+            <NewQuestion />
           </PrivateRoute>
           <PrivateRoute path='/account'>
             <Account />
           </PrivateRoute>
-          
-          <Route path="*" component={NotFound}></Route>
+
+          <Route path='*' component={NotFound}></Route>
         </Switch>
       </div>
     </BrowserRouter>

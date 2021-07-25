@@ -1,4 +1,3 @@
-// FIX ERROR HANDLING
 export const postController = {
   async getQuestionPost(id) {
     const response = await fetch(
@@ -17,14 +16,11 @@ export const postController = {
 
     return post;
   },
-  
+
   async getPost(id) {
-    const response = await fetch(
-      `http://localhost:8000/api/v1/posts/${id}`,
-      {
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    const response = await fetch(`http://localhost:8000/api/v1/posts/${id}`, {
+      headers: { 'Content-Type': 'application/json' },
+    });
 
     if (!response.ok) {
       throw new Error(`Post: ${response.statusText}`);
@@ -57,14 +53,17 @@ export const postController = {
   },
 
   async updatePost(data, postId) {
-    const response = await fetch(`http://localhost:8000/api/v1/posts/${postId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({
-        ...data,
-      }),
-    });
+    const response = await fetch(
+      `http://localhost:8000/api/v1/posts/${postId}`,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          ...data,
+        }),
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`Question: ${response.statusText}`);

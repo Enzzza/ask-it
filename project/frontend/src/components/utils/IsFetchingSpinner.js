@@ -8,7 +8,6 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 1337,
     top: '95%',
     left: '90%',
-  
   },
 }));
 

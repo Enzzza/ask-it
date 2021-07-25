@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import {Link as RouterLink, useHistory,useLocation } from 'react-router-dom';
+import { Link as RouterLink, useHistory, useLocation } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -17,8 +17,6 @@ import SignInForm from '../components/forms/SignInForm';
 
 import useCustomSnackbar from '../components/utils/snackbar/useCustomSnackbar';
 import { SpinnerContext } from '../contexts/SpinnerContext';
-
-
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -55,8 +53,8 @@ export default function SignIn() {
 
   let history = useHistory();
   let location = useLocation();
-  let { from } = location.state || { from: { pathname: "/" } };
-  const auth  = useAuth();
+  let { from } = location.state || { from: { pathname: '/' } };
+  const auth = useAuth();
 
   const formSubmitHandler = async ({ email, password }) => {
     setLoaderState(true);

@@ -40,7 +40,7 @@ export default function AccountPasswordForm() {
         render={({ field }) => (
           <TextField
             {...field}
-            style={{marginTop:10}}
+            style={{ marginTop: 10 }}
             variant='outlined'
             fullWidth
             id='currentPassword'
@@ -74,7 +74,7 @@ export default function AccountPasswordForm() {
         render={({ field }) => (
           <TextField
             {...field}
-            style={{marginTop:10}}
+            style={{ marginTop: 10 }}
             variant='outlined'
             fullWidth
             id='newPassword'
@@ -106,7 +106,7 @@ export default function AccountPasswordForm() {
         render={({ field }) => (
           <TextField
             {...field}
-            style={{marginTop:10}}
+            style={{ marginTop: 10 }}
             variant='outlined'
             fullWidth
             id='confirmPassword'

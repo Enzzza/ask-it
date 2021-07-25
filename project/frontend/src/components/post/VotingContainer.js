@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 import { grey, green, red } from '@material-ui/core/colors';
@@ -21,11 +21,11 @@ const useStyles = makeStyles({
     userSelect: 'none',
   },
   thumbsUpBtn: {
-    color: green[300],
+    color: green[200],
   },
 
   thumbsDownBtn: {
-    color: red[300],
+    color: red[200],
   },
   thumbsUpBtnActive: {
     color: green[500],

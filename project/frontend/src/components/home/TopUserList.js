@@ -10,7 +10,7 @@ import { useQuery } from 'react-query';
 import { publicController } from '../../api/public';
 import { UserAvatar } from '../avatar/UserAvatar';
 import Error from '../utils/Error';
-import { ClassicSpinner } from "react-spinners-kit";
+import { ClassicSpinner } from 'react-spinners-kit';
 
 const useStyles = makeStyles({
   mainTitle: {
@@ -47,7 +47,7 @@ export default function TopUserList() {
   );
 
   if (isLoading) {
-    return <ClassicSpinner loading={isLoading}/>
+    return <ClassicSpinner loading={isLoading} />;
   }
 
   if (isError) {

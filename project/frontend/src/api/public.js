@@ -71,13 +71,9 @@ export const publicController = {
   },
 
   async getPaginatedAnswersForQuestion(url) {
-    console.log(url);
-    const response = await fetch(
-      `${url}`,
-      {
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    const response = await fetch(`${url}`, {
+      headers: { 'Content-Type': 'application/json' },
+    });
     if (!response.ok) {
       throw new Error(`Answers: ${response.statusText}`);
     }
@@ -87,5 +83,4 @@ export const publicController = {
 
     return obj;
   },
-  
 };

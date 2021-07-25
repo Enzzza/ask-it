@@ -13,20 +13,15 @@ import IsFetchingSpinner from './components/utils/IsFetchingSpinner';
 import SpinnerContextProvider from './contexts/SpinnerContext';
 import { SnackbarProvider } from 'material-ui-snackbar-provider';
 import CustomSnackbar from './components/utils/snackbar/CustomSnackbar';
-import CssBaseline from "@material-ui/core/CssBaseline";
-
-
-
-
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 const darkTheme = createMuiTheme({
   palette: {
     type: 'dark',
-    background:{
-      default:"#303030",
-    }
+    background: {
+      default: '#303030',
+    },
   },
-  
 });
 
 const queryClient = new QueryClient();

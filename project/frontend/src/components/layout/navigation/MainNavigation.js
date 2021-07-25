@@ -29,13 +29,12 @@ const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
   },
-  root:{
+  root: {
     position: 'fixed',
     bottom: theme.spacing(2),
     right: theme.spacing(2),
-  }
+  },
 }));
-
 
 function ScrollTop(props) {
   const { children } = props;
@@ -65,14 +64,15 @@ function ScrollTop(props) {
   );
 }
 
-
-
 export default function PrimarySearchAppBar() {
   const auth = useAuth();
   let history = useHistory();
   const classes = useStyles();
-  const accountPopupState = usePopupState({ variant: 'popover', popupId: 'userMenu' });
- 
+  const accountPopupState = usePopupState({
+    variant: 'popover',
+    popupId: 'userMenu',
+  });
+
   const snackbar = useCustomSnackbar();
 
   const signout = async () => {
@@ -94,7 +94,7 @@ export default function PrimarySearchAppBar() {
   const myQuestions = () => {
     accountPopupState.close();
     history.push(`/users/questions/${auth.user.id}`);
-  }
+  };
 
   return (
     <div className={classes.grow}>
@@ -109,7 +109,7 @@ export default function PrimarySearchAppBar() {
 
           {auth.user ? (
             <div>
-              <Notification/>
+              <Notification />
               <IconButton {...bindTrigger(accountPopupState)} color='inherit'>
                 <UserAvatar user={auth.user} />
               </IconButton>
@@ -132,7 +132,7 @@ export default function PrimarySearchAppBar() {
           )}
         </Toolbar>
       </AppBar>
-      <Toolbar id="back-to-top-anchor" />
+      <Toolbar id='back-to-top-anchor' />
       <ScrollTop>
         <Fab color='primary' size='small' aria-label='scroll back to top'>
           <KeyboardArrowUpIcon />

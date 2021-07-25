@@ -1,6 +1,5 @@
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
-
 import { makeStyles } from '@material-ui/core/styles';
 import { lightBlue, grey } from '@material-ui/core/colors';
 import { Link as RouterLink } from 'react-router-dom';
@@ -93,7 +92,7 @@ export default function BaseCard(props) {
                     asked {GetHumanizedTime(props.question.createdAt)}
                   </Box>
                   {isLoading ? (
-                   <LoadingSpinner isLoading={isLoading} />
+                    <LoadingSpinner isLoading={isLoading} />
                   ) : (
                     <Box display='flex' alignItems='center'>
                       <UserAvatar user={data} spacing={6} />

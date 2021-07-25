@@ -47,8 +47,8 @@ function useProvideAuth() {
     if (!error) {
       console.log('user logged in!');
       setUser(user);
-    }else{
-      console.log("user not logged in!")
+    } else {
+      console.log('user not logged in!');
     }
 
     return { msg, user, error };

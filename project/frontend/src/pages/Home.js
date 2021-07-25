@@ -1,6 +1,6 @@
-import React,{useEffect} from "react"
-import HomeContainer from "../components/home/HomeContainer"
-import { useAuth } from "../contexts/AuthContext"
+import React, { useEffect } from 'react';
+import HomeContainer from '../components/home/HomeContainer';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Home() {
   const auth = useAuth();
@@ -8,7 +8,5 @@ export default function Home() {
     auth.me();
   }, []);
 
-    return (
-      <HomeContainer/>
-    )
+  return <HomeContainer />;
 }

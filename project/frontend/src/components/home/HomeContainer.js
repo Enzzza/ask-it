@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import PostContainer from '../post/PostContainer';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
@@ -11,7 +11,6 @@ import { publicController } from '../../api/public';
 import { grey } from '@material-ui/core/colors';
 import Error from '../utils/Error';
 import LoadingSpinner from '../utils/LoadingSpinner';
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -43,7 +42,7 @@ export default function HomeContainer(props) {
   const { isLoading, isError, data, error } = useQuery(
     ['questions', page],
     () => publicController.getPaginatedPublicQuestions(page),
-    { keepPreviousData: true, staleTime:5000}
+    { keepPreviousData: true, staleTime: 5000 }
   );
 
   useEffect(() => {
@@ -53,8 +52,6 @@ export default function HomeContainer(props) {
       );
     }
   }, [data, page, queryClient]);
-
-  
 
   if (isLoading) {
     return <LoadingSpinner isLoading={isLoading} />;

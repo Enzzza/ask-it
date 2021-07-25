@@ -118,6 +118,5 @@ export const authController = {
     } catch (error) {
       return error.json();
     }
-
   },
 };

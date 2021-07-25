@@ -31,12 +31,12 @@ export default function NewQuestion() {
   const schema = yup.object().shape({
     title: yup
       .string()
-      .min(15,'Title must be at least 15 characters.')
+      .min(15, 'Title must be at least 15 characters.')
       .max(155, 'Title cannot be longer than 155 characters.')
       .required('Title is required.'),
     body: yup
       .string()
-      .min(30,'Body must be at least 30 characters.')
+      .min(30, 'Body must be at least 30 characters.')
       .max(30000, 'Body cannot be longer than 30000 characters.')
       .required('Body is required.'),
   });
@@ -64,7 +64,7 @@ export default function NewQuestion() {
     },
   });
 
-  const formSubmitHandler =  (data) => {
+  const formSubmitHandler = (data) => {
     mutation.mutate(data);
     methods.reset({ title: '', body: '' });
   };
