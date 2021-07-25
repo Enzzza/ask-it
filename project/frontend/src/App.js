@@ -10,6 +10,9 @@ const WebsocketProvider = createSagaProvider({
 });
 
 function App() {
+  console.log("test");
+  console.log(process.env.BACKEND_SERVER_URL)
+  console.log(process.env.NEKI_FIELD)
   return (
     <>
       <ProvideAuth>

@@ -1,0 +1,36 @@
+# set the base image
+FROM node:alpine as build-stage
+
+# set working directory
+WORKDIR /app
+
+# copy everything to /app directory
+COPY . /app
+
+# add the node_modules folder to $PATH
+ENV PATH /app/node_modules/.bin:$PATH
+
+# install and cache dependencies
+RUN yarn --network-timeout 100000
+
+#build the project for production
+RUN yarn build
+
+# set up production environment
+FROM nginx:alpine as production-stage
+
+# make dir for app
+RUN mkdir /app
+
+# copy the build folder from react to the root of nginx (www)
+COPY --from=build-stage /app/build /app
+
+# copy nginx conf file
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
+
+# expose port 80 to the outer world
+EXPOSE 80
+
+# start nginx 
+CMD ["nginx", "-g", "daemon off;"]
+

@@ -1,30 +1,54 @@
 version: '3.9'
 
 services:
-  backend:
+  reverse-proxy:
+    build:
+      context: ./project/reverse-proxy/
+      dockerfile: nginx.dockerfile
+    image: nginx-custom
+    container_name: reverse-proxy
+    depends_on:
+      - go-backend
+      - react-frontend
+    ports:
+      - "80:80"
+
+  go-backend:
     build:
       context: ./project/backend
-      dockerfile: DOCKERFILE
+      dockerfile: dockerfile
     image: go-backend
     container_name: go-backend
     depends_on:
       - db
       - redis
     ports:
-      - 8000:8000
+      - "8000:8000"
     env_file: .backend.env
     restart: on-failure
-      
+
+  react-frontend:
+    build:
+      context: ./project/frontend
+      dockerfile: dockerfile.prod
+    image: react-frontend
+    container_name: react-frontend
+    depends_on:
+      - go-backend
+    ports:
+      - "8080:80"
+    env_file: .frontend.env
+    restart: always
 
   redis:
     image: redis:6.2.4-alpine
     ports:
-      - '6379:6379'
+      - "6379:6379"
 
   db:
     image: mysql:8.0.25
     ports:
-      - '3307:3306'
+      - "3307:3306"
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     env_file: .db.env
