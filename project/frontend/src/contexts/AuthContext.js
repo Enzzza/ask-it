@@ -45,10 +45,7 @@ function useProvideAuth() {
     let { msg, user, error } = await authController.me();
 
     if (!error) {
-      console.log('user logged in!');
       setUser(user);
-    } else {
-      console.log('user not logged in!');
     }
 
     return { msg, user, error };

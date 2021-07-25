@@ -37,7 +37,7 @@ const AccountPassword = () => {
   const methods = useForm({ resolver: yupResolver(schema) });
   const { isLoading, setLoaderState } = useContext(SpinnerContext);
   const snackbar = useCustomSnackbar();
-  // console.log('errors', methods.errors);
+
   const formSubmitHandler = async (data) => {
     setLoaderState(true);
     let { msg, error } = await auth.updatePassword(data);

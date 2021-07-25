@@ -9,10 +9,8 @@ export default function NotificationBell() {
   const [state, dispatch] = useSagaState('websocket');
 
   useEffect(() => {
-    console.log('connect!');
     dispatch({ type: 'connect', payload: { id: auth.user.id } });
     return () => {
-      console.log('disconect');
       dispatch({ type: 'disconnect' });
     };
   }, []);

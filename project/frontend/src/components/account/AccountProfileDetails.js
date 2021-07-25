@@ -27,7 +27,6 @@ const AccountProfileDetails = (props) => {
 
   const methods = useForm({ resolver: yupResolver(schema) });
 
-  // console.log('errors', methods.errors);
   const formSubmitHandler = async (data) => {
     setLoaderState(true);
     let { msg, error } = await auth.updateDetails(data);

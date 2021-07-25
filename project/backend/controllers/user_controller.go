@@ -30,7 +30,7 @@ func GetUserQuestions(c *fiber.Ctx) error {
 	}
 
 	var userQuestions []models.Post
-	if err := database.DB.Debug().Where("user_id = ? AND parent_id= ?",id,0).Find(&userQuestions).Error; err != nil{
+	if err := database.DB.Where("user_id = ? AND parent_id= ?",id,0).Find(&userQuestions).Error; err != nil{
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": "Couldn't query database!",
 			"error": true,
@@ -109,7 +109,7 @@ func GetUserAnswers(c *fiber.Ctx) error {
 	}
 
 	var userAnswers []models.Post
-	database.DB.Debug().Where("user_id = ? AND parent_id> ?",id,0).Find(&userAnswers)
+	database.DB.Where("user_id = ? AND parent_id> ?",id,0).Find(&userAnswers)
 	
 	return c.JSON(fiber.Map{
 		"msg": fmt.Sprintf("Number of answers found %v", len(userAnswers)),

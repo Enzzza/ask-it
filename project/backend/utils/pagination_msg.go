@@ -1,9 +1,10 @@
 package utils
 
 import (
-	"strconv"
 	"fmt"
+	"strconv"
 	"strings"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -14,7 +15,7 @@ func GetPaginationMsg(c *fiber.Ctx,total int)(interface{},interface{}){
 	startIndex := (page - 1) * pageSize;
 	endIndex := page * pageSize;
 	url := fmt.Sprintf("%s%s",c.BaseURL(),c.OriginalURL())
-	//fmt.Println(startIndex,endIndex)
+	
 
 	var nextPage int
 	var prevPage int 

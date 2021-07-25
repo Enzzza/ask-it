@@ -8,7 +8,6 @@ export const userController = {
     );
 
     if (!response.ok) {
-      console.log(response);
       throw new Error(`User: ${response.statusText}`);
     }
 

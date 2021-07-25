@@ -20,7 +20,7 @@ import (
 // @Router /v1/public/questions [get]
 func GetPublicQuestions(c *fiber.Ctx) error {
 	var publicQuestions []models.Post
-	if err := database.DB.Debug().Where("parent_id= ?",0).Find(&publicQuestions).Error; err != nil{
+	if err := database.DB.Where("parent_id= ?",0).Find(&publicQuestions).Error; err != nil{
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": "Couldn't query database!",
 			"error": true,
@@ -84,7 +84,7 @@ func GetPaginatedPublicQuestions(c *fiber.Ctx) error {
 func GetAnswersForQuestion(c *fiber.Ctx) error {
 	id := c.Params("questionID")
 	var answers []models.Post
-	if err:= database.DB.Debug().Where("id != ? AND parent_id= ?",id,id).Find(&answers).Error; err != nil {
+	if err:= database.DB.Where("id != ? AND parent_id= ?",id,id).Find(&answers).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": "Couldn't query database!",
 			"error": true,
@@ -182,7 +182,7 @@ func GetPublicQuestionsById(c *fiber.Ctx) error {
 	id := c.Params("userID")
 
 	var userQuestions []models.Post
-	if err:= database.DB.Debug().Where("user_id = ? AND parent_id= ?",id,0).Find(&userQuestions).Error; err != nil {
+	if err:= database.DB.Where("user_id = ? AND parent_id= ?",id,0).Find(&userQuestions).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": "Couldn't query database!",
 			"error": true,

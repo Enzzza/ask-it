@@ -209,8 +209,8 @@ func UpdateDetails(c *fiber.Ctx) error {
 		snakeKey := strcase.ToSnake(key)
 		updateData[snakeKey] = element
     }
-	fmt.Println(updateData);
-	if result := database.DB.Debug().Model(&user).Select("name","surname","email","profile_color","profile_shade").Updates(updateData); result.Error != nil {
+
+	if result := database.DB.Model(&user).Select("name","surname","email","profile_color","profile_shade").Updates(updateData); result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": "Couldn't update user details!",
 			"error": true,
