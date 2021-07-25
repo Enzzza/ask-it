@@ -171,6 +171,8 @@ export default function AnswersContainer(props) {
                       user={auth.user ? auth.user : null}
                       id={question.id}
                       votes={question.score}
+                      questionId={props.questionId}
+                      isAnswer={false}
                     />
                   }
                   question={question}
@@ -185,9 +187,9 @@ export default function AnswersContainer(props) {
                 />
               </Grid>
               <AnswerDivider />
-              {questions.pages.map((page) => (
+              {questions.pages.map((page,pageIndex) => (
                 <React.Fragment key={page.next}>
-                  {page.answers.map((item) => (
+                  {page.answers.map((item,answerIndex) => (
                     <Grid item xs={12} key={item.id}>
                       <BaseCard
                         sideComponent={
@@ -196,6 +198,10 @@ export default function AnswersContainer(props) {
                             user={auth.user ? auth.user : null}
                             id={item.id}
                             votes={item.score}
+                            questionId={props.questionId}
+                            isAnswer={true}
+                            pageIndex={pageIndex}
+                            answerIndex={answerIndex}
                           />
                         }
                         question={item}

@@ -99,14 +99,85 @@ export default function VotingContainer(props) {
   const addScoreMutation = useMutation(
     (data) => scoreController.addScore(data),
     {
+      onMutate: async (vote) => {
+        await queryClient.cancelQueries(['users', userId]);
+        const previousVote = queryClient.getQueryData(['users', userId]);
+        let newVote = { ...previousVote };
+        newVote.votes.posts[vote.postID] = { id: vote.postID, vote: vote.vote };
+
+        let previousPost = null;
+        let newPost = null;
+        if (props.isAnswer) {
+          await queryClient.cancelQueries([
+            'questions',
+            'answers',
+            { questionId: props.questionId.toString() },
+          ]);
+
+          previousPost = queryClient.getQueryData([
+            'questions',
+            'answers',
+            { questionId: props.questionId.toString() },
+          ]);
+          newPost = { ...previousPost };
+          newPost.pages[props.pageIndex].answers[props.answerIndex].score +=
+            vote.vote;
+        } else {
+          await queryClient.cancelQueries([
+            ['questions', { questionId: props.questionId.toString() }],
+          ]);
+          previousPost = queryClient.getQueryData([
+            'questions',
+            { questionId: props.questionId.toString() },
+          ]);
+          newPost = { ...previousPost };
+          newPost.score += vote.vote;
+        }
+
+        return { previousVote, previousPost, newVote };
+      },
       onSuccess: () => {
-        queryClient.invalidateQueries('questions');
-        queryClient.invalidateQueries('users');
         snackbar.showSuccess(`Vote added`);
       },
 
-      onError: (error) => {
+      onError: (error, context) => {
+        queryClient.setQueryData(
+          ['users', context.newVote.id],
+          context.previousVote
+        );
+        if (props.isAnswer) {
+          queryClient.setQueryData(
+            [
+              'questions',
+              'answers',
+              { questionId: props.questionId.toString() },
+            ],
+            context.previousPost
+          );
+        } else {
+          queryClient.setQueryData(
+            ['questions', { questionId: props.questionId.toString() }],
+            context.previousPost
+          );
+        }
+
         snackbar.showError(error.message, 'Close', () => {});
+      },
+      onSettled: (newVote) => {
+        if (props.isAnswer) {
+          queryClient.invalidateQueries([
+            'questions',
+            'answers',
+            { questionId: props.questionId.toString() },
+          ]);
+        } else {
+          queryClient.invalidateQueries([
+            'questions',
+            { questionId: props.questionId.toString() },
+          ]);
+        }
+
+        queryClient.invalidateQueries(['users', newVote.id]);
       },
     }
   );
