@@ -72,7 +72,7 @@ Tutorials are great, but building projects is the best way to learn. Before doin
 
 ### Frontend
 - [React](https://reactjs.org/)
-- [Context API](https://reactjs.org/docs/context.html) used for client state management, for example storing *authentication* state of user.
+- [Context API](https://reactjs.org/docs/context.html) used for client state management, for example storing **authentication** state of user.
 - [React Query](https://react-query.tanstack.com/) server state library responsible for managing asynchronous operations between server and client.
 - [React Hook Form](https://react-hook-form.com/) for form validation.
 - [Yup](https://github.com/jquense/yup) object schema validation
@@ -131,7 +131,7 @@ docker compose up --build
 
 This command will build and run containers.
 
-## Pulling and runing images from **Docker Hub**
+## Pulling and running images from **Docker Hub**
 
 If you don't want to build images locally you can pull them from Docker Hub. Make sure that you have **.backend.env** and **.db.env** in same place as **docker-compose.yaml** file. 
 
