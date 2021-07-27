@@ -103,6 +103,10 @@ export default function VotingContainer(props) {
         await queryClient.cancelQueries(['users', userId]);
         const previousVote = queryClient.getQueryData(['users', userId]);
         let newVote = { ...previousVote };
+        if(newVote.votes === null){
+          newVote.votes = {}
+        }
+        !('posts' in newVote.votes) && (newVote.votes.posts={})
         newVote.votes.posts[vote.postID] = { id: vote.postID, vote: vote.vote };
 
         let previousPost = null;

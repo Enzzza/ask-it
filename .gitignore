@@ -1,5 +1,5 @@
-*.env
-
+.db.env
+.backend.env
 
 # React
 /node_modules

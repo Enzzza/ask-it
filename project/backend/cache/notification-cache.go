@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+
 	"github.com/gomodule/redigo/redis"
 )
 
@@ -66,6 +67,8 @@ func StoreMsgToRedis(userID string, msg []byte) error{
 		"SET",
 		userID,
 		json,
+		"EX",
+		1800,
 	)
 
 	if err != nil {

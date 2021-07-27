@@ -66,7 +66,6 @@ export default function NewQuestion() {
 
   const formSubmitHandler = (data) => {
     mutation.mutate(data);
-    methods.reset({ title: '', body: '' });
   };
 
   return (
