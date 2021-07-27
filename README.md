@@ -95,12 +95,11 @@ Tutorials are great, but building projects is the best way to learn. Before doin
 
 ## Building image locally 
 
-Clone GitHub repository
-
-```
-git clone 
-```
-Change directory 
+Clone GitHub repository and cd to it
+```bash
+git clone https://github.com/Enzzza/ask-it.git
+cd ask-it
+``` 
 
 Change name of this files:
 > .example.backend.env to **.backend.env**
@@ -132,7 +131,9 @@ docker compose up --build
 
 This command will build and run containers.
 
-## Pulling nad building image from Docker Hub
+## Pulling and runing images from **Docker Hub**
+
+If you don't want to build images locally you can pull them from Docker Hub. Make sure that you have **.backend.env** and **.db.env** in same place as **docker-compose.yaml** file. 
 
 Make new docker-compose file
 > docker-compose.yaml
@@ -140,9 +141,51 @@ Make new docker-compose file
 version: '3.9'
 
 services:
-  ask-it:
-    image: ask-it:enzza
-     
+  reverse-proxy:
+    image:  enzzzah/nginx-custom:ask-it
+    container_name: reverse-proxy
+    depends_on:
+      - go-backend
+      - react-frontend
+    ports:
+      - "80:80"
+
+  go-backend:
+    image: enzzzah/go-backend:ask-it
+    container_name: go-backend
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "8000:8000"
+    env_file: .backend.env
+    restart: on-failure
+
+  react-frontend:
+    image: enzzzah/react-frontend:ask-it
+    container_name: react-frontend
+    depends_on:
+      - go-backend
+    ports:
+      - "8080:80"
+    restart: always
+
+  redis:
+    image: redis:6.2.4-alpine
+    ports:
+      - "6379"
+
+  db:
+    image: mysql:8.0.25
+    ports:
+      - "3306"
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    env_file: .db.env
+    volumes:
+      - MYDB:/var/lib/mysql
+volumes:
+  MYDB: 
 ```
 
 Then run following commands
