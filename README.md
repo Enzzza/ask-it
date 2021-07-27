@@ -125,7 +125,7 @@ MYSQL_ROOT_PASSWORD=your_password
 
 Build docker image using this command:
 
-```
+```bash
 docker compose up --build
 ```
 
@@ -189,7 +189,7 @@ volumes:
 ```
 
 Then run following commands
-```
+```bash
 docker-compose pull 
 docker-compose up
 ```
