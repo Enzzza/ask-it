@@ -1,6 +1,7 @@
+import config from './config.json';
 export const authController = {
   async signin(email, password) {
-    const response = await fetch(`http://localhost:8000/api/v1/auth/login`, {
+    const response = await fetch(`${config.BASE_URL}/api/v1/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -21,7 +22,7 @@ export const authController = {
   },
 
   async signup(data) {
-    const response = await fetch(`http://localhost:8000/api/v1/auth/register`, {
+    const response = await fetch(`${config.BASE_URL}/api/v1/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -41,7 +42,7 @@ export const authController = {
   },
 
   async signout() {
-    const response = await fetch('http://localhost:8000/api/v1/auth/logout', {
+    const response = await fetch(`${config.BASE_URL}/api/v1/auth/logout`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -58,7 +59,7 @@ export const authController = {
   },
 
   async me() {
-    const response = await fetch('http://localhost:8000/api/v1/auth/me', {
+    const response = await fetch(`${config.BASE_URL}/api/v1/auth/me`, {
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
     });
@@ -75,7 +76,7 @@ export const authController = {
   // adjust this if we will use react query!
   async updateDetails(data) {
     const response = await fetch(
-      `http://localhost:8000/api/v1/auth/updatedetails`,
+      `${config.BASE_URL}/api/v1/auth/updatedetails`,
       {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -96,10 +97,9 @@ export const authController = {
     }
   },
 
-  // adjust this if we will use react query!
   async updatePassword(data) {
     const response = await fetch(
-      `http://localhost:8000/api/v1/auth/updatepassword`,
+      `${config.BASE_URL}/api/v1/auth/updatepassword`,
       {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },

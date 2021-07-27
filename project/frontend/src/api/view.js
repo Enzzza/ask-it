@@ -1,6 +1,8 @@
+import config from './config.json';
+
 export const viewController = {
   async addView(questionId) {
-    const response = await fetch(`http://localhost:8000/api/v1/views`, {
+    const response = await fetch(`${config.BASE_URL}/api/v1/views`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
