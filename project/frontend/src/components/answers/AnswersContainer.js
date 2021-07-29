@@ -24,7 +24,7 @@ import {
 } from 'react-query';
 import { postController } from '../../api/post';
 import { publicController } from '../../api/public';
-import config from '../../api/config.json';
+import { Config } from '../../config';
 
 import { useAuth } from '../../contexts/AuthContext';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -109,7 +109,7 @@ export default function AnswersContainer(props) {
   const questionId = question?.id;
 
   const fetchAnswers = ({
-    pageParam = `${config.BASE_URL}/api/v1/public/answers/${
+    pageParam = `${Config.API_URL}/api/v1/public/answers/${
       props.questionId
     }/${1}-${5}`,
   }) => {

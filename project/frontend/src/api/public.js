@@ -1,9 +1,9 @@
-import config from './config.json';
+import { Config } from "../config";
 
 export const publicController = {
   async getPublicQuestionsById(userID) {
     const response = await fetch(
-      `${config.BASE_URL}/api/v1/public/questions/${userID}`,
+      `${Config.API_URL}/api/v1/public/questions/${userID}`,
       {
         headers: { 'Content-Type': 'application/json' },
       }
@@ -21,7 +21,7 @@ export const publicController = {
 
   async getPaginatedPublicQuestions(page, pageSize = 20) {
     const response = await fetch(
-      `${config.BASE_URL}/api/v1/public/questions/${page}-${pageSize}`,
+      `${Config.API_URL}/api/v1/public/questions/${page}-${pageSize}`,
       {
         headers: { 'Content-Type': 'application/json' },
       }
@@ -38,7 +38,7 @@ export const publicController = {
 
   async getUsersWithMostAnswers() {
     const response = await fetch(
-      `${config.BASE_URL}/api/v1/public/top-answers`,
+      `${Config.API_URL}/api/v1/public/top-answers`,
       {
         headers: { 'Content-Type': 'application/json' },
       }
@@ -56,7 +56,7 @@ export const publicController = {
 
   async getAnswersForQuestion(questionID) {
     const response = await fetch(
-      `${config.BASE_URL}/api/v1/public/answers/${questionID}`,
+      `${Config.API_URL}/api/v1/public/answers/${questionID}`,
       {
         headers: { 'Content-Type': 'application/json' },
       }

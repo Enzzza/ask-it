@@ -1,9 +1,9 @@
-import config from './config.json';
+import { Config } from "../config";
 
 export const postController = {
   async getQuestionPost(id) {
     const response = await fetch(
-      `${config.BASE_URL}/api/v1/posts/question/${id}`,
+      `${Config.API_URL}/api/v1/posts/question/${id}`,
       {
         headers: { 'Content-Type': 'application/json' },
       }
@@ -20,7 +20,7 @@ export const postController = {
   },
 
   async getPost(id) {
-    const response = await fetch(`${config.BASE_URL}/api/v1/posts/${id}`, {
+    const response = await fetch(`${Config.API_URL}/api/v1/posts/${id}`, {
       headers: { 'Content-Type': 'application/json' },
     });
 
@@ -35,7 +35,7 @@ export const postController = {
   },
 
   async createPost(data) {
-    const response = await fetch(`${config.BASE_URL}/api/v1/posts`, {
+    const response = await fetch(`${Config.API_URL}/api/v1/posts`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -56,7 +56,7 @@ export const postController = {
 
   async updatePost(data, postId) {
     const response = await fetch(
-      `${config.BASE_URL}/api/v1/posts/${postId}`,
+      `${Config.API_URL}/api/v1/posts/${postId}`,
       {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -79,7 +79,7 @@ export const postController = {
 
   async deletePost(postId) {
     const response = await fetch(
-      `${config.BASE_URL}/api/v1/posts/${postId}`,
+      `${Config.API_URL}/api/v1/posts/${postId}`,
       {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },

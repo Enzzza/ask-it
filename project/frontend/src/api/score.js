@@ -1,8 +1,8 @@
-import config from './config.json';
+import { Config } from "../config";
 
 export const scoreController = {
   async getTopScoreQuestions() {
-    const response = await fetch(`${config.BASE_URL}/api/v1/scores/top`, {
+    const response = await fetch(`${Config.API_URL}/api/v1/scores/top`, {
       headers: { 'Content-Type': 'application/json' },
     });
 
@@ -17,7 +17,7 @@ export const scoreController = {
   },
 
   async addScore(data) {
-    const response = await fetch(`${config.BASE_URL}/api/v1/scores/add`, {
+    const response = await fetch(`${Config.API_URL}/api/v1/scores/add`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',

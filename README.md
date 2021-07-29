@@ -8,11 +8,10 @@ Tutorials are great, but building projects is the best way to learn. Before doin
     - [x] List of last 20 questions with load more functionality
     - [x] List of users with most answers
     - [x] List of questions with the most likes (Hot questions)
-    - [x] List of questions with the most likes (Hot questions)
 2. [x] **Question page**
     - [x] Show question and all details (including answers)
     - [x] If user is *Authenticated* show form for adding new answer
-    - [x] If user is *Authenticated* and he answered question, show edit and delete buttons  for editing/deleting answer
+    - [x] If user is *Authenticated* and he answered question, implement functionality for editing and deleting answer.
 3. [x] **My questions page**
     - [x] List of last 20 user questions with load more functionality
 4. [x] **Login page**
@@ -42,11 +41,6 @@ Tutorials are great, but building projects is the best way to learn. Before doin
 - It is desirable that the application be done in accordance with **React** best practices, where an understanding of the **React** lifecycle of certain components will be clearly seen.
 - Use some of the popular HTML / CSS frameworks (Bootstrap, Rush Foundation, **Material Design** )
 
-
-
-
-
-
 # Project
 
 ## Tech Stack
@@ -56,7 +50,7 @@ Tutorials are great, but building projects is the best way to learn. Before doin
 - [GoFiber](https://gofiber.io/) for building REST API
     - [JWT](https://github.com/gofiber/jwt) middleware, for valid token, it sets the user in Ctx.Locals and calls next handler. For invalid token, it returns "401 - Unauthorized" error. For missing token, it returns "400 - Bad Request".
     - [CORS](https://docs.gofiber.io/api/middleware/cors) middleware to enable [Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) with various options.
-    - [Limiter](https://docs.gofiber.io/api/middleware/limiter) middleware to limit epeated requests to public APIs and/or endpoints such as password reset etc.
+    - [Limiter](https://docs.gofiber.io/api/middleware/limiter) middleware to limit repeated requests to public APIs and/or endpoints such as password reset etc.
     - [Helmet](https://github.com/gofiber/helmet) middleware for securing Fiber apps by setting various HTTP headers.
     - [Logger](https://docs.gofiber.io/api/middleware/logger) middleware for logging HTTP request/response details.
 
@@ -64,7 +58,7 @@ Tutorials are great, but building projects is the best way to learn. Before doin
 - [GORM](https://gorm.io/) ORM library for GoLang.
     - [MySQL driver](https://gorm.io/driver/mysql) driver for MySQL.
 - [go-playground](https://github.com/go-playground/validator/) for server side validation
-- [Redigo](https://github.com/gomodule/redigo) Go client for Redis database used for storing messages while user was offline.
+- [Redigo](https://github.com/gomodule/redigo) Go client for Redis database used for storing messages while user is offline.
 
 - [Ikisocket](https://github.com/antoniodipinto/ikisocket) WebSocket wrapper for Fiber for sending messages to logged in user.
 
@@ -73,7 +67,7 @@ Tutorials are great, but building projects is the best way to learn. Before doin
 ### Frontend
 - [React](https://reactjs.org/)
 - [Context API](https://reactjs.org/docs/context.html) used for client state management, for example storing **authentication** state of user.
-- [React Query](https://react-query.tanstack.com/) server state library responsible for managing asynchronous operations between server and client.
+- [React Query](https://react-query.tanstack.com/) server state library responsible for managing asynchronous operations between server and client. This library allows us to cache data. 
 - [React Hook Form](https://react-hook-form.com/) for form validation.
 - [Yup](https://github.com/jquense/yup) object schema validation
 - [Material Ui](https://material-ui.com/) user interface library.
@@ -112,7 +106,7 @@ SERVER_URL=0.0.0.0:8000
 SERVER_READ_TIMEOUT=60
 JWT_SECRET_KEY=YOUR SECRET
 JWT_SECRET_KEY_EXPIRE_MINUTES_COUNT=1440
- MYSQL_SERVER_URL=root:yourpassword@tcp(db:3306)/ask_it_db?charset=utf8mb4&parseTime=True&loc=Local
+ MYSQL_SERVER_URL=root:your_password@tcp(db:3306)/ask_it_db?charset=utf8mb4&parseTime=True&loc=Local
  REDIS_SERVER_URL=redis://redis:6379/0
 ```
 
@@ -125,7 +119,7 @@ MYSQL_ROOT_PASSWORD=your_password
 
 Build docker image using this command:
 
-```
+```bash
 docker compose up --build
 ```
 
@@ -142,13 +136,14 @@ version: '3.9'
 
 services:
   reverse-proxy:
-    image:  enzzzah/nginx-custom:ask-it
+    image: enzzzah/nginx-custom:ask-it
     container_name: reverse-proxy
     depends_on:
       - go-backend
       - react-frontend
     ports:
       - "80:80"
+      - "8000:8000"
 
   go-backend:
     image: enzzzah/go-backend:ask-it
@@ -157,7 +152,7 @@ services:
       - db
       - redis
     ports:
-      - "8000:8000"
+      - "8000"
     env_file: .backend.env
     restart: on-failure
 
@@ -167,8 +162,10 @@ services:
     depends_on:
       - go-backend
     ports:
-      - "8080:80"
+      - "80"
     restart: always
+    volumes:
+      - ./project/frontend/config-production.js:/app/config.js
 
   redis:
     image: redis:6.2.4-alpine
@@ -185,22 +182,33 @@ services:
     volumes:
       - MYDB:/var/lib/mysql
 volumes:
-  MYDB: 
+  MYDB:
 ```
 
 Then run following commands
-```
+```bash
 docker-compose pull 
 docker-compose up
 ```
 
 # Usage
 
+After we ran last commands we can test it locally.
 To see our webpage navigate to **localhost** in browser (nginx reverse proxy will route us to react app)
 
 To see backend swagger documentation navigate to **localhost:8000/docs/**
 
+For production we need to change our **backend** API endpoint from **localhost** to *ip* of our server.
+<br>
+<br>
+In root folder there is file:
+> config-production.js
+``` javascript
+window.API_URL = "http://localhost:8000"
+```
+Change API_URL to your server IP.
 
 # Live demo
 
 [AskIt]()
+ 

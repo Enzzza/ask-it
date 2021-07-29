@@ -1,9 +1,9 @@
-import config from './config.json';
+import { Config } from "../config";
 
 export const userController = {
   async getUserById(id) {
     const response = await fetch(
-      `${config.BASE_URL}/api/v1/user/profile/${id}`,
+      `${Config.API_URL}/api/v1/user/profile/${id}`,
       {
         headers: { 'Content-Type': 'application/json' },
       }
@@ -21,7 +21,7 @@ export const userController = {
 
   async getUserQuestions() {
     const response = await fetch(
-      `${config.BASE_URL}/api/v1/user/questions`,
+      `${Config.API_URL}/api/v1/user/questions`,
       {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -39,7 +39,7 @@ export const userController = {
   },
   async getPaginatedUserQuestions(id, page, pageSize = 20) {
     const response = await fetch(
-      `${config.BASE_URL}/api/v1/user/${id}/questions/${page}-${pageSize}`,
+      `${Config.API_URL}/api/v1/user/${id}/questions/${page}-${pageSize}`,
       {
         headers: { 'Content-Type': 'application/json' },
       }

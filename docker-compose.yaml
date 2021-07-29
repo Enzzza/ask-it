@@ -12,6 +12,7 @@ services:
       - react-frontend
     ports:
       - "80:80"
+      - "8000:8000"
 
   go-backend:
     build:
@@ -23,7 +24,7 @@ services:
       - db
       - redis
     ports:
-      - "8000:8000"
+      - "8000"
     env_file: .backend.env
     restart: on-failure
 
@@ -36,8 +37,10 @@ services:
     depends_on:
       - go-backend
     ports:
-      - "8080:80"
+      - "80"
     restart: always
+    volumes:
+      - ./project/frontend/config-production.js:/app/config.js
 
   redis:
     image: redis:6.2.4-alpine
