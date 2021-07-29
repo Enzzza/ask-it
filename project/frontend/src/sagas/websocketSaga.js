@@ -1,8 +1,9 @@
 // Use immutable to improve performance and avoid a mess
 import Immutable from 'immutable';
+import { Config } from '../config';
 
 async function connect(state, payload, dispatch) {
-  const websocket = new WebSocket(`ws://localhost:8000/ws/${payload.id}`);
+  const websocket = new WebSocket(`${Config.WS_URL}/${payload.id}`);
 
   websocket.onopen = function (evt) {
     // Call merge action to update state with connected: true
