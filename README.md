@@ -204,7 +204,7 @@ For production we need to change our **backend** API endpoint from **localhost**
 In root folder there is file:
 > config-production.js
 ``` javascript
-window.API_URL = "http://localhost:8000"
+window.API_URL = "http://SERVER_IP:8000"
 ```
 Change API_URL to your server IP.
 
