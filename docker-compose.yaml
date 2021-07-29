@@ -11,8 +11,10 @@ services:
       - go-backend
       - react-frontend
     ports:
-      - "80:80"
-      - "8000:8000"
+      - '80:80'
+      - '8000:8000'
+    volumes:
+      - ./project/reverse-proxy/ssl:/etc/nginx/ssl
 
   go-backend:
     build:
@@ -24,7 +26,7 @@ services:
       - db
       - redis
     ports:
-      - "8000"
+      - '8000'
     env_file: .backend.env
     restart: on-failure
 
@@ -37,7 +39,7 @@ services:
     depends_on:
       - go-backend
     ports:
-      - "80"
+      - '80'
     restart: always
     volumes:
       - ./project/frontend/config-production.js:/app/config.js
@@ -45,12 +47,12 @@ services:
   redis:
     image: redis:6.2.4-alpine
     ports:
-      - "6379"
+      - '6379'
 
   db:
     image: mysql:8.0.25
     ports:
-      - "3306"
+      - '3306'
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     env_file: .db.env

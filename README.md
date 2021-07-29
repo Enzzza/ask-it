@@ -198,13 +198,14 @@ To see our webpage navigate to **localhost** in browser (nginx reverse proxy wil
 
 To see backend swagger documentation navigate to **localhost:8000/docs/**
 
-For production we need to change our **backend** API endpoint from **localhost** to *ip* of our server.
+For production we need to change our **backend** API endpoint and **WS** endpoint from **localhost** to *ip* of our server.
 <br>
 <br>
 In root folder there is file:
 > config-production.js
 ``` javascript
-window.API_URL = "http://SERVER_IP:8000"
+window.API_URL = `http://localhost`
+window.WS_URL = `ws://localhost/ws`
 ```
 Change API_URL to your server IP.
 
