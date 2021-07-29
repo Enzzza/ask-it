@@ -177,7 +177,7 @@ export default function AnswersContainer(props) {
                     />
                   }
                   question={question}
-                  isAnswer={false}
+                  isAnswer={true}
                   actionComponent={
                     <ActionButtons
                       userId={question.userID}
