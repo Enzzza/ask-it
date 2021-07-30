@@ -9,7 +9,7 @@ import (
 // SwaggerRoute func for describe group of API Docs routes.
 func SwaggerRoute(a *fiber.App) {
 	// Create routes group.
-	route := a.Group("/docs/")
+	route := a.Group("/api/docs/")
 	
 	// Routes for GET method:
 	route.Get("*",swagger.Handler)

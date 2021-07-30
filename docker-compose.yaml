@@ -12,7 +12,7 @@ services:
       - react-frontend
     ports:
       - '80:80'
-      - '8000:8000'
+      - '443:443'
     volumes:
       - ./project/reverse-proxy/ssl:/etc/nginx/ssl
 

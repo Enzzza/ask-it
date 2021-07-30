@@ -1,2 +1,2 @@
-window.API_URL = `http://localhost`
-window.WS_URL = `ws://localhost/ws`
+window.API_URL = `https://localhost`
+window.WS_URL = `wss://localhost/ws`

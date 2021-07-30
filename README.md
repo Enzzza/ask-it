@@ -142,8 +142,10 @@ services:
       - go-backend
       - react-frontend
     ports:
-      - "80:80"
-      - "8000:8000"
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./project/reverse-proxy/ssl:/etc/nginx/ssl
 
   go-backend:
     image: enzzzah/go-backend:ask-it
@@ -152,7 +154,7 @@ services:
       - db
       - redis
     ports:
-      - "8000"
+      - '8000'
     env_file: .backend.env
     restart: on-failure
 
@@ -162,7 +164,7 @@ services:
     depends_on:
       - go-backend
     ports:
-      - "80"
+      - '80'
     restart: always
     volumes:
       - ./project/frontend/config-production.js:/app/config.js
@@ -170,12 +172,12 @@ services:
   redis:
     image: redis:6.2.4-alpine
     ports:
-      - "6379"
+      - '6379'
 
   db:
     image: mysql:8.0.25
     ports:
-      - "3306"
+      - '3306'
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     env_file: .db.env
@@ -183,6 +185,7 @@ services:
       - MYDB:/var/lib/mysql
 volumes:
   MYDB:
+
 ```
 
 Then run following commands
@@ -196,18 +199,23 @@ docker-compose up
 After we ran last commands we can test it locally.
 To see our webpage navigate to **localhost** in browser (nginx reverse proxy will route us to react app)
 
-To see backend swagger documentation navigate to **localhost:8000/docs/**
+To see backend swagger documentation navigate to **localhost/api/docs/**
 
-For production we need to change our **backend** API endpoint and **WS** endpoint from **localhost** to *ip* of our server.
+For **production** we need to change our **backend** API endpoint and **WS** endpoint from **localhost** to *ip* of our server.
 <br>
 <br>
 In root folder there is file:
 > config-production.js
 ``` javascript
-window.API_URL = `http://localhost`
-window.WS_URL = `ws://localhost/ws`
+window.API_URL = `https://SERVER_IP`
+window.WS_URL = `wss://SERVER_IP/ws`
 ```
-Change API_URL to your server IP.
+Change SERVER_IP to your server IP.
+
+I am using HTTPS protocol and for this demo i will include self signed certificate that you can find in 
+>./project/reverse-proxy/ssl/
+
+In that folder you can also find dhparam.pem that is needed for nginx configuration. For production include your valid ssl certificates.
 
 # Live demo
 

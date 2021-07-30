@@ -1,6 +1,5 @@
 .db.env
 .backend.env
-
 # React
 /node_modules
 scripts/flow/*/.flowconfig
