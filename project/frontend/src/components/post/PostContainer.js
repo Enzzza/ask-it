@@ -23,6 +23,7 @@ export default function PostContainer(props) {
                 sideComponent={addMoreProps(props.sideComponent, question)}
                 question={question}
                 isAnswer={props.isAnswer}
+                answerState={props.answerState}
                 actionComponent={
                   <ActionButtons
                     userId={question.userID}

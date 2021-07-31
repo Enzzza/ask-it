@@ -89,7 +89,7 @@ export default function BaseCard(props) {
                     className={classes.timestampText}
                     marginBottom={1}
                   >
-                    {props.isAnswer ? 'answered' : 'asked'}{' '}
+                    {props.answerState ? 'answered' : 'asked'}{' '}
                     {GetHumanizedTime(props.question.createdAt)}
                   </Box>
                   {isLoading ? (

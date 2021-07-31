@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -15,6 +16,7 @@ func GetPaginationMsg(c *fiber.Ctx,total int)(interface{},interface{}){
 	startIndex := (page - 1) * pageSize;
 	endIndex := page * pageSize;
 	url := fmt.Sprintf("%s%s",c.BaseURL(),c.OriginalURL())
+	url = strings.Replace(url, "http", "https",1)
 	
 
 	var nextPage int
@@ -28,8 +30,8 @@ func GetPaginationMsg(c *fiber.Ctx,total int)(interface{},interface{}){
 	if (startIndex > 0) {
 		prevPage = page - 1
 	}
-	
-	indexOfSeparator := strings.Index(url,"-") - 1
+	re := regexp.MustCompile(`([^\/]+$)`)
+	indexOfSeparator := re.FindStringIndex(url)[0]
 
 	if nextPage != 0 {
 		nextPageUrl = url[:indexOfSeparator] + strconv.Itoa(nextPage) + url[indexOfSeparator+1:]

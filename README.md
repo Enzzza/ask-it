@@ -27,7 +27,10 @@ Tutorials are great, but building projects is the best way to learn. Before doin
     - [x] Form for changing user password
 7. [x] **Extras**
     - [x] Authenticated user should get notification when someone answers on his question.
-
+## TODO
+- [ ] Make site responsive
+- [ ] Add user roles
+- [ ] Make text editor
 ## Technical specifications
 
 ### Backend
@@ -219,4 +222,4 @@ In that folder you can also find dhparam.pem that is needed for nginx configurat
 
 # Live demo
 
-[AskIt]()
+[AskIt](https://www.enzzza-dev.site/)

@@ -73,6 +73,7 @@ export default function UserQuestionsContainer(props) {
                 sideComponent={<StatsContainer />}
                 questions={data.questions}
                 isAnswer={false}
+                answerState={false}
               />
             </Grid>
           </Grid>

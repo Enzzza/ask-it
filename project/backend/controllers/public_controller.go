@@ -129,7 +129,7 @@ func GetPaginatedAnswersForQuestion(c *fiber.Ctx) error {
 		fmt.Println("Couldn't query database")
 	}
 	prev, next := utils.GetPaginationMsg(c,len(allAnswers))
-	
+
 	return c.JSON(fiber.Map{
 		"msg": fmt.Sprintf("Number of answers found for question %v", len(answers)),
 		"total": len(allAnswers),

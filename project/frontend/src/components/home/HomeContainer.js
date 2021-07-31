@@ -70,6 +70,7 @@ export default function HomeContainer(props) {
               sideComponent={<StatsContainer />}
               questions={data.questions}
               isAnswer={false}
+              answerState={false}
             />
           </Grid>
           <Grid item xs={5}>
